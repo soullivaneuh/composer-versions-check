@@ -3,11 +3,13 @@
 namespace SLLH\ComposerVersionsCheck;
 
 use Composer\Composer;
+use Composer\DependencyResolver\Operation\UpdateOperation;
 use Composer\EventDispatcher\EventSubscriberInterface;
+use Composer\Installer\PackageEvent;
+use Composer\Installer\PackageEvents;
 use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
 use Composer\Script\Event;
-use Composer\Script\PackageEvent;
 use Composer\Script\ScriptEvents;
 
 /**
@@ -26,12 +28,18 @@ class VersionsCheckPlugin implements PluginInterface, EventSubscriberInterface
     private $io;
 
     /**
+     * @var VersionsCheck
+     */
+    private $versionsCheck;
+
+    /**
      * {@inheritdoc}
      */
     public function activate(Composer $composer, IOInterface $io)
     {
         $this->composer = $composer;
         $this->io = $io;
+        $this->versionsCheck = new VersionsCheck();
     }
 
     /**
@@ -40,11 +48,11 @@ class VersionsCheckPlugin implements PluginInterface, EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            ScriptEvents::POST_PACKAGE_UPDATE => array(
-                array('postPackageUpdate'),
+            PackageEvents::PRE_PACKAGE_UPDATE => array(
+                array('prePackageUpdate'),
             ),
             ScriptEvents::POST_UPDATE_CMD => array(
-                array('postUpdate'),
+                array('postUpdate', -100),
             ),
         );
     }
@@ -52,9 +60,15 @@ class VersionsCheckPlugin implements PluginInterface, EventSubscriberInterface
     /**
      * @param PackageEvent $event
      */
-    public function postPackageUpdate(PackageEvent $event)
+    public function prePackageUpdate(PackageEvent $event)
     {
-        die('postPackageUpdate');
+        $operation = $event->getOperation();
+
+        if (!$operation instanceof UpdateOperation) {
+            return;
+        }
+
+        $this->versionsCheck->check($operation->getTargetPackage());
     }
 
     /**
@@ -62,6 +76,6 @@ class VersionsCheckPlugin implements PluginInterface, EventSubscriberInterface
      */
     public function postUpdate(Event $event)
     {
-        die('postUpdate');
+        $this->io->write($this->versionsCheck->getOutput(), false);
     }
 }

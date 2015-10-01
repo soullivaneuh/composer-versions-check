@@ -13,6 +13,11 @@
     "require": {
         "composer-plugin-api": "^1.0"
     },
+    "require-dev": {
+        "composer/composer": "dev-master"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "SLLH\\ComposerVersionsCheck\\": "src/"

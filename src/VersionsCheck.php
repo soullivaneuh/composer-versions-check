@@ -1,0 +1,73 @@
+<?php
+
+namespace SLLH\ComposerVersionsCheck;
+
+use Composer\Package\PackageInterface;
+use Composer\Semver\Comparator;
+use Composer\Semver\Constraint\Constraint;
+
+/**
+ * @author Sullivan Senechal <soullivaneuh@gmail.com>
+ */
+final class VersionsCheck
+{
+    /**
+     * @var array an array of array(PackageInterface, PackageInterface). Actual and last package
+     */
+    private $outdatedPackages = array();
+
+    /**
+     * @param PackageInterface $package
+     */
+    public function check(PackageInterface $package)
+    {
+        // Var comment to be removed if following PR is merged: https://github.com/composer/composer/pull/4469
+        /** @var PackageInterface[] $packages */
+        $packages = $package->getRepository()->findPackages($package->getName(), new Constraint('>', $package->getVersion()));
+        if (count($packages) > 0) {
+            // Sort packages by highest version to lowest
+            usort($packages, function (PackageInterface $p1, PackageInterface $p2) {
+                return Comparator::lessThan($p1->getVersion(), $p2->getVersion());
+            });
+            // Push actual and last package on outdated array
+            array_push($this->outdatedPackages, array($package, $packages[0]));
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function getOutput()
+    {
+        $output = array();
+
+        if (0 === count($this->outdatedPackages)) {
+            $output[] = '<info>All packages are up to date.</info>';
+        } else {
+            $this->createNotUpToDateOutput($output);
+        }
+
+        return implode("\n", $output)."\n";
+    }
+
+    private function createNotUpToDateOutput(array &$output)
+    {
+        $output[] = '<warning>Some packages are not up to date:</warning>';
+        $output[] = '';
+
+        /** @var PackageInterface[] $packages */
+        foreach ($this->outdatedPackages as $packages) {
+            /** @var PackageInterface $actual */
+            /** @var PackageInterface $last */
+            list($actual, $last) = $packages;
+            $output[] = sprintf(
+                ' - <info>%s</info> (<comment>%s</comment>) last version is <comment>%s</comment>',
+                $actual->getPrettyName(),
+                $actual->getPrettyVersion(),
+                $last->getPrettyVersion()
+            );
+        }
+
+        $output[] = '';
+    }
+}
