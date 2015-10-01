@@ -1,0 +1,19 @@
+{
+    "name": "sllh/composer-versions-check",
+    "description": "Checks if packages are up to date to last major versions after update",
+    "keywords": ["composer", "plugin", "update", "versions"],
+    "type": "composer-plugin",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sullivan SENECHAL",
+            "email": "soullivaneuh@gmail.com"
+        }
+    ],
+    "require": {
+        "composer-plugin-api": "^1.0"
+    },
+    "extra": {
+        "class": "SLLH\\ComposerVersionsCheck\\VersionsCheckPlugin"
+    }
+}
