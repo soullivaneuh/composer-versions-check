@@ -56,20 +56,6 @@ class VersionsCheckPlugin implements PluginInterface, EventSubscriberInterface
     }
 
     /**
-     * @param PackageEvent $event
-     */
-    public function prePackageUpdate(PackageEvent $event)
-    {
-        $operation = $event->getOperation();
-
-        if (!$operation instanceof UpdateOperation) {
-            return;
-        }
-
-        $this->versionsCheck->check($operation->getTargetPackage());
-    }
-
-    /**
      * @param Event $event
      */
     public function postUpdate(Event $event)
