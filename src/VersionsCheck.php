@@ -3,6 +3,8 @@
 namespace SLLH\ComposerVersionsCheck;
 
 use Composer\Package\PackageInterface;
+use Composer\Repository\ComposerRepository;
+use Composer\Repository\WritableRepositoryInterface;
 use Composer\Semver\Comparator;
 use Composer\Semver\Constraint\Constraint;
 
@@ -17,20 +19,25 @@ final class VersionsCheck
     private $outdatedPackages = array();
 
     /**
-     * @param PackageInterface $package
+     * @param ComposerRepository          $composerRepository
+     * @param WritableRepositoryInterface $localRepository
      */
-    public function check(PackageInterface $package)
+    public function checkPackages(ComposerRepository $composerRepository, WritableRepositoryInterface $localRepository)
     {
         // Var comment to be removed if following PR is merged: https://github.com/composer/composer/pull/4469
         /** @var PackageInterface[] $packages */
-        $packages = $package->getRepository()->findPackages($package->getName(), new Constraint('>', $package->getVersion()));
-        if (count($packages) > 0) {
-            // Sort packages by highest version to lowest
-            usort($packages, function (PackageInterface $p1, PackageInterface $p2) {
-                return Comparator::lessThan($p1->getVersion(), $p2->getVersion());
-            });
-            // Push actual and last package on outdated array
-            array_push($this->outdatedPackages, array($package, $packages[0]));
+        $packages = $localRepository->getPackages();
+        foreach ($packages as $package) {
+            /** @var PackageInterface[] $higherPackages */
+            $higherPackages = $composerRepository->findPackages($package->getName(), new Constraint('>', $package->getVersion()));
+            if (count($higherPackages) > 0) {
+                // Sort packages by highest version to lowest
+                usort($higherPackages, function (PackageInterface $p1, PackageInterface $p2) {
+                    return Comparator::lessThan($p1->getVersion(), $p2->getVersion());
+                });
+                // Push actual and last package on outdated array
+                array_push($this->outdatedPackages, array($package, $higherPackages[0]));
+            }
         }
     }
 

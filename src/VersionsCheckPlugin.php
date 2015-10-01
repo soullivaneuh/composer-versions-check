@@ -6,9 +6,10 @@ use Composer\Composer;
 use Composer\DependencyResolver\Operation\UpdateOperation;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\Installer\PackageEvent;
-use Composer\Installer\PackageEvents;
 use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
+use Composer\Repository\ComposerRepository;
+use Composer\Repository\RepositoryManager;
 use Composer\Script\Event;
 use Composer\Script\ScriptEvents;
 
@@ -48,9 +49,6 @@ class VersionsCheckPlugin implements PluginInterface, EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            PackageEvents::PRE_PACKAGE_UPDATE => array(
-                array('prePackageUpdate'),
-            ),
             ScriptEvents::POST_UPDATE_CMD => array(
                 array('postUpdate', -100),
             ),
@@ -76,6 +74,27 @@ class VersionsCheckPlugin implements PluginInterface, EventSubscriberInterface
      */
     public function postUpdate(Event $event)
     {
+        $this->checkVersions($event->getComposer()->getRepositoryManager());
+    }
+
+    /**
+     * @param RepositoryManager $repositoryManager
+     */
+    private function checkVersions(RepositoryManager $repositoryManager)
+    {
+        $composerRepository = null;
+        foreach ($repositoryManager->getRepositories() as $repository) {
+            if ($repository instanceof ComposerRepository) {
+                $composerRepository = $repository;
+            }
+            break;
+        }
+
+        if (null === $composerRepository) {
+            return;
+        }
+
+        $this->versionsCheck->checkPackages($composerRepository, $repositoryManager->getLocalRepository());
         $this->io->write($this->versionsCheck->getOutput(), false);
     }
 }
