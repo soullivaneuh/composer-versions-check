@@ -3,6 +3,8 @@
 namespace SLLH\ComposerVersionsCheck;
 
 use Composer\Package\PackageInterface;
+use Composer\Package\RootPackageInterface;
+use Composer\Repository\ArrayRepository;
 use Composer\Repository\ComposerRepository;
 use Composer\Repository\WritableRepositoryInterface;
 use Composer\Semver\Comparator;
@@ -19,10 +21,11 @@ final class VersionsCheck
     private $outdatedPackages = array();
 
     /**
-     * @param ComposerRepository          $composerRepository
+     * @param ArrayRepository             $composerRepository
      * @param WritableRepositoryInterface $localRepository
+     * @param RootPackageInterface        $rootPackage
      */
-    public function checkPackages(ComposerRepository $composerRepository, WritableRepositoryInterface $localRepository)
+    public function checkPackages(ArrayRepository $composerRepository, WritableRepositoryInterface $localRepository, RootPackageInterface $rootPackage)
     {
         // Var comment to be removed if following PR is merged: https://github.com/composer/composer/pull/4469
         /** @var PackageInterface[] $packages */
@@ -30,6 +33,12 @@ final class VersionsCheck
         foreach ($packages as $package) {
             /** @var PackageInterface[] $higherPackages */
             $higherPackages = $composerRepository->findPackages($package->getName(), new Constraint('>', $package->getVersion()));
+            // Remove not stable packages if unwanted
+            if (true === $rootPackage->getPreferStable()) {
+                $higherPackages = array_filter($higherPackages, function (PackageInterface $package) {
+                    return 'stable' === $package->getStability();
+                });
+            }
             if (count($higherPackages) > 0) {
                 // Sort packages by highest version to lowest
                 usort($higherPackages, function (PackageInterface $p1, PackageInterface $p2) {
