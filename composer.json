@@ -13,6 +13,16 @@
     "require": {
         "composer-plugin-api": "^1.0"
     },
+    "autoload": {
+        "psr-4": {
+            "SLLH\\ComposerVersionsCheck\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SLLH\\ComposerVersionsCheck\\Tests\\": "tests/"
+        }
+    },
     "extra": {
         "class": "SLLH\\ComposerVersionsCheck\\VersionsCheckPlugin",
         "branch-alias": {
