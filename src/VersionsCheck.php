@@ -16,7 +16,7 @@ use Composer\Semver\Constraint\Constraint;
 final class VersionsCheck
 {
     /**
-     * @var array an array of array(PackageInterface, PackageInterface). Actual and last package
+     * @var OutdatedPackage[]
      */
     private $outdatedPackages = array();
 
@@ -45,7 +45,7 @@ final class VersionsCheck
                     return Comparator::lessThan($p1->getVersion(), $p2->getVersion());
                 });
                 // Push actual and last package on outdated array
-                array_push($this->outdatedPackages, array($package, $higherPackages[0]));
+                array_push($this->outdatedPackages, new OutdatedPackage($package, $higherPackages[0]));
             }
         }
     }
@@ -71,16 +71,12 @@ final class VersionsCheck
         $output[] = '<warning>Some packages are not up to date:</warning>';
         $output[] = '';
 
-        /** @var PackageInterface[] $packages */
-        foreach ($this->outdatedPackages as $packages) {
-            /** @var PackageInterface $actual */
-            /** @var PackageInterface $last */
-            list($actual, $last) = $packages;
+        foreach ($this->outdatedPackages as $outdatedPackage) {
             $output[] = sprintf(
                 ' - <info>%s</info> (<comment>%s</comment>) last version is <comment>%s</comment>',
-                $actual->getPrettyName(),
-                $actual->getPrettyVersion(),
-                $last->getPrettyVersion()
+                $outdatedPackage->getActual()->getPrettyName(),
+                $outdatedPackage->getActual()->getPrettyVersion(),
+                $outdatedPackage->getLast()->getPrettyVersion()
             );
         }
 
