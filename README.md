@@ -20,6 +20,8 @@ It warns user for outdated packages from last major versions after update comman
 [![Coverage Status](https://coveralls.io/repos/Soullivaneuh/composer-versions-check/badge.svg?branch=master)](https://coveralls.io/r/Soullivaneuh/composer-versions-check?branch=master)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/278a8379-fb6d-425f-b175-7d7b9ef93d47/mini.png)](https://insight.sensiolabs.com/projects/278a8379-fb6d-425f-b175-7d7b9ef93d47)
 
+![composer-versions-check_demo](https://cloud.githubusercontent.com/assets/1698357/10265515/1904c09c-6a34-11e5-9b01-0cdd26af659b.gif)
+
 ## Installation
 
 You can install it either globally (recommended):
