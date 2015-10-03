@@ -14,7 +14,7 @@ use Composer\Script\ScriptEvents;
 /**
  * @author Sullivan Senechal <soullivaneuh@gmail.com>
  */
-class VersionsCheckPlugin implements PluginInterface, EventSubscriberInterface
+final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInterface
 {
     /**
      * @var Composer
