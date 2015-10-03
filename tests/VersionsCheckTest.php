@@ -30,6 +30,9 @@ class VersionsCheckTest extends \PHPUnit_Framework_TestCase
      */
     private $versionsCheck;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->distRepository = new ArrayRepository();
@@ -72,6 +75,9 @@ EOF
         }
     }
 
+    /**
+     * @return array
+     */
     public function getOutdatedDetectionTestData()
     {
         return array(
@@ -129,6 +135,9 @@ EOF
         , implode("\n", $shouldBeUpdatedOutput)), $this->versionsCheck->getOutput());
     }
 
+    /**
+     * @return array
+     */
     public function getMultiplePackagesComparisonTestsData()
     {
         return array(
@@ -154,6 +163,9 @@ EOF
         );
     }
 
+    /**
+     * Calls VersionsCheck::checkPackages
+     */
     private function checkPackages()
     {
         $this->versionsCheck->checkPackages($this->distRepository, $this->localRepository, $this->rootPackage);
