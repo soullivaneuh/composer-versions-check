@@ -19,3 +19,23 @@ It warns user for outdated packages from last major versions after update comman
 [![Code Climate](https://codeclimate.com/github/Soullivaneuh/composer-versions-check/badges/gpa.svg)](https://codeclimate.com/github/Soullivaneuh/composer-versions-check)
 [![Coverage Status](https://coveralls.io/repos/Soullivaneuh/composer-versions-check/badge.svg?branch=master)](https://coveralls.io/r/Soullivaneuh/composer-versions-check?branch=master)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/278a8379-fb6d-425f-b175-7d7b9ef93d47/mini.png)](https://insight.sensiolabs.com/projects/278a8379-fb6d-425f-b175-7d7b9ef93d47)
+
+## Installation
+
+You can install it either globally (recommended):
+
+```shell
+composer global require sllh/composer-versions-check
+```
+
+or locally:
+
+```shell
+composer require sllh/composer-versions-check
+```
+
+## Usage
+
+That's it! Composer will enable automatically the plugin as soon it's installed.
+
+Just run `composer update` command to see the plugin working.
