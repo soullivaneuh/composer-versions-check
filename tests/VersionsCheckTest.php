@@ -164,7 +164,7 @@ EOF
     }
 
     /**
-     * Calls VersionsCheck::checkPackages
+     * Calls VersionsCheck::checkPackages.
      */
     private function checkPackages()
     {
