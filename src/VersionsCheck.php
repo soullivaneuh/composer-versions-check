@@ -20,18 +20,18 @@ final class VersionsCheck
     private $outdatedPackages = array();
 
     /**
-     * @param ArrayRepository             $composerRepository
+     * @param ArrayRepository             $distRepository
      * @param WritableRepositoryInterface $localRepository
      * @param RootPackageInterface        $rootPackage
      */
-    public function checkPackages(ArrayRepository $composerRepository, WritableRepositoryInterface $localRepository, RootPackageInterface $rootPackage)
+    public function checkPackages(ArrayRepository $distRepository, WritableRepositoryInterface $localRepository, RootPackageInterface $rootPackage)
     {
         // Var comment to be removed if following PR is merged: https://github.com/composer/composer/pull/4469
         /** @var PackageInterface[] $packages */
         $packages = $localRepository->getPackages();
         foreach ($packages as $package) {
             /** @var PackageInterface[] $higherPackages */
-            $higherPackages = $composerRepository->findPackages($package->getName(), new Constraint('>', $package->getVersion()));
+            $higherPackages = $distRepository->findPackages($package->getName(), new Constraint('>', $package->getVersion()));
             // Remove not stable packages if unwanted
             if (true === $rootPackage->getPreferStable()) {
                 $higherPackages = array_filter($higherPackages, function (PackageInterface $package) {
