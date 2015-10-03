@@ -11,6 +11,35 @@ use SLLH\ComposerVersionsCheck\VersionsCheck;
 class VersionsCheckTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * @var ArrayRepository
+     */
+    private $distRepository;
+
+    /**
+     * @var WritableArrayRepository
+     */
+    private $localRepository;
+
+    /**
+     * @var RootPackage
+     */
+    private $rootPackage;
+
+    /**
+     * @var VersionsCheck
+     */
+    private $versionsCheck;
+
+    protected function setUp()
+    {
+        $this->distRepository = new ArrayRepository();
+        $this->localRepository = new WritableArrayRepository();
+
+        $this->rootPackage = new RootPackage('my/project', '1.0.0', '1.0.0');
+        $this->versionsCheck = new VersionsCheck();
+    }
+
+    /**
      * @dataProvider getOutdatedDetectionTestData
      *
      * @param string $actualVersion
@@ -20,20 +49,15 @@ class VersionsCheckTest extends \PHPUnit_Framework_TestCase
      */
     public function testOutdatedDetection($actualVersion, $higherVersion, $shouldBeUpdated, $preferStable = false)
     {
-        $distRepository = new ArrayRepository();
-        $localRepository = new WritableArrayRepository();
+        $this->distRepository->addPackage(new Package('foo/bar', $higherVersion, $higherVersion));
+        $this->localRepository->addPackage(new Package('foo/bar', $actualVersion, $actualVersion));
 
-        $distRepository->addPackage(new Package('foo/bar', $higherVersion, $higherVersion));
-        $localRepository->addPackage(new Package('foo/bar', $actualVersion, $actualVersion));
-
-        $rootPackage = new RootPackage('my/project', '1.0.0', '1.0.0');
-        $rootPackage->setPreferStable($preferStable);
-        $versionsCheck = new VersionsCheck();
-        $versionsCheck->checkPackages($distRepository, $localRepository, $rootPackage);
+        $this->rootPackage->setPreferStable($preferStable);
+        $this->checkPackages();
 
         // Must have one outdatedPackage if this should be updated
         if (true === $shouldBeUpdated) {
-            $this->assertAttributeCount(1, 'outdatedPackages', $versionsCheck);
+            $this->assertAttributeCount(1, 'outdatedPackages', $this->versionsCheck);
             $this->assertSame(sprintf(<<<EOF
 <warning>Some packages are not up to date:</warning>
 
@@ -41,10 +65,10 @@ class VersionsCheckTest extends \PHPUnit_Framework_TestCase
 
 
 EOF
-                , $actualVersion, $higherVersion), $versionsCheck->getOutput());
+                , $actualVersion, $higherVersion), $this->versionsCheck->getOutput());
         } else {
-            $this->assertAttributeCount(0, 'outdatedPackages', $versionsCheck);
-            $this->assertSame("<info>All packages are up to date.</info>\n", $versionsCheck->getOutput());
+            $this->assertAttributeCount(0, 'outdatedPackages', $this->versionsCheck);
+            $this->assertSame("<info>All packages are up to date.</info>\n", $this->versionsCheck->getOutput());
         }
     }
 
@@ -72,20 +96,17 @@ EOF
      */
     public function testMultiplePackagesComparison(array $packagesData, $preferStable = false)
     {
-        $rootPackage = new RootPackage('my/project', '1.0.0', '1.0.0');
-        $rootPackage->setMinimumStability('dev');
-        $rootPackage->setPreferStable($preferStable);
+        $this->rootPackage->setMinimumStability('dev');
+        $this->rootPackage->setPreferStable($preferStable);
 
-        $distRepository = new ArrayRepository();
-        $localRepository = new WritableArrayRepository();
         $shouldBeUpdatedOutput = array();
 
         foreach ($packagesData as $name => $packageData) {
             list($actualVersion, $availableVersions, $expectedVersion) = $packageData;
             $actualPackage = new Package($name, $actualVersion, $actualVersion);
-            $localRepository->addPackage($actualPackage);
+            $this->localRepository->addPackage($actualPackage);
             foreach ($availableVersions as $availableVersion) {
-                $distRepository->addPackage(new Package($name, $availableVersion, $availableVersion));
+                $this->distRepository->addPackage(new Package($name, $availableVersion, $availableVersion));
             }
 
             if (false !== $expectedVersion) {
@@ -96,8 +117,7 @@ EOF
             }
         }
 
-        $versionsCheck = new VersionsCheck();
-        $versionsCheck->checkPackages($distRepository, $localRepository, $rootPackage);
+        $this->checkPackages();
 
         $this->assertSame(sprintf(<<<EOF
 <warning>Some packages are not up to date:</warning>
@@ -106,7 +126,7 @@ EOF
 
 
 EOF
-        , implode("\n", $shouldBeUpdatedOutput)), $versionsCheck->getOutput());
+        , implode("\n", $shouldBeUpdatedOutput)), $this->versionsCheck->getOutput());
     }
 
     public function getMultiplePackagesComparisonTestsData()
@@ -132,5 +152,10 @@ EOF
                 'vendor/prefer-stable' => array('1.0.1', array('1.0.0', '1.0.1', '2.0.0-alpha1'), false),
             ), true),
         );
+    }
+
+    private function checkPackages()
+    {
+        $this->versionsCheck->checkPackages($this->distRepository, $this->localRepository, $this->rootPackage);
     }
 }
