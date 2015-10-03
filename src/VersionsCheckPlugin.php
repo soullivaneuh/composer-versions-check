@@ -58,9 +58,7 @@ class VersionsCheckPlugin implements PluginInterface, EventSubscriberInterface
      */
     public function postUpdate(Event $event)
     {
-        $composer = $event->getComposer();
-
-        $this->checkVersions($composer->getRepositoryManager(), $event->getComposer()->getPackage());
+        $this->checkVersions($this->composer->getRepositoryManager(), $event->getComposer()->getPackage());
     }
 
     /**
