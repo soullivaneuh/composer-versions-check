@@ -24,13 +24,13 @@ It warns user for outdated packages from last major versions after update comman
 
 You can install it either globally (recommended):
 
-```shell
+```bash
 composer global require sllh/composer-versions-check
 ```
 
 or locally:
 
-```shell
+```bash
 composer require sllh/composer-versions-check
 ```
 
