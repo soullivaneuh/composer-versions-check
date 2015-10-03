@@ -5,7 +5,6 @@ namespace SLLH\ComposerVersionsCheck;
 use Composer\Package\PackageInterface;
 use Composer\Package\RootPackageInterface;
 use Composer\Repository\ArrayRepository;
-use Composer\Repository\ComposerRepository;
 use Composer\Repository\WritableRepositoryInterface;
 use Composer\Semver\Comparator;
 use Composer\Semver\Constraint\Constraint;
