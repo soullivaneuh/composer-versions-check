@@ -18,6 +18,9 @@ matrix:
   include:
     - php: 5.3
       env: COMPOSER_FLAGS="--prefer-lowest"
+    # Special case for https://github.com/Soullivaneuh/composer-versions-check/issues/8
+    - php: 5.6
+      env: WITHOUT_SEMVER=1
   allow_failures:
     - php: nightly
     - php: hhvm
@@ -29,13 +32,19 @@ cache:
   directories:
     - $HOME/.composer/cache/files
 
-before_script:
+before_install:
   - composer selfupdate
   - composer config -g github-oauth.github.com $GITHUB_OAUTH_TOKEN
   - composer global require phpunit/phpunit:^4.8 --no-update
-  - composer global update --prefer-dist --no-interaction
   - if [ "$PHP_CS_FIXER_VERSION" != "" ]; then composer require "fabpot/php-cs-fixer:${PHP_CS_FIXER_VERSION}" --no-update; fi;
+  - if [ "$WITHOUT_SEMVER" = 1 ]; then composer require "composer/composer:dev-master#013a748" --no-update; fi;
+
+install:
+  - composer global update --prefer-dist --no-interaction
   - composer update --prefer-dist --no-interaction $COMPOSER_FLAGS
+
+before_script:
+  - if [ "$WITHOUT_SEMVER" = 1 ]; then rm -rf vendor/composer/semver; fi;
 
 script: make test
 
