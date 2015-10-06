@@ -62,7 +62,7 @@ final class VersionsCheck
             $this->createNotUpToDateOutput($output);
         }
 
-        return implode("\n", $output)."\n";
+        return implode(PHP_EOL, $output).PHP_EOL;
     }
 
     private function createNotUpToDateOutput(array &$output)
