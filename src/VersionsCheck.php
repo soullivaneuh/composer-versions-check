@@ -32,8 +32,6 @@ final class VersionsCheck
      */
     public function checkPackages(ArrayRepository $distRepository, WritableRepositoryInterface $localRepository, RootPackageInterface $rootPackage)
     {
-        // Var comment to be removed if following PR is merged: https://github.com/composer/composer/pull/4469
-        /** @var PackageInterface[] $packages */
         $packages = $localRepository->getPackages();
         foreach ($packages as $package) {
             // Old composer versions BC
@@ -42,7 +40,6 @@ final class VersionsCheck
                 : new VersionConstraint('>', $package->getVersion())
             ;
 
-            /** @var PackageInterface[] $higherPackages */
             $higherPackages = $distRepository->findPackages($package->getName(), $versionConstraint);
             // Remove not stable packages if unwanted
             if (true === $rootPackage->getPreferStable()) {
