@@ -6,6 +6,8 @@ use Composer\Composer;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\IO\IOInterface;
 use Composer\Package\RootPackageInterface;
+use Composer\Plugin\CommandEvent;
+use Composer\Plugin\PluginEvents;
 use Composer\Plugin\PluginInterface;
 use Composer\Repository\RepositoryManager;
 use Composer\Script\Event;
@@ -32,6 +34,11 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
     private $versionsCheck;
 
     /**
+     * @var bool
+     */
+    private $preferLowest;
+
+    /**
      * {@inheritdoc}
      */
     public function activate(Composer $composer, IOInterface $io)
@@ -47,6 +54,9 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
     public static function getSubscribedEvents()
     {
         return array(
+            PluginEvents::COMMAND => array(
+                array('command'),
+            ),
             ScriptEvents::POST_UPDATE_CMD => array(
                 array('postUpdate', -100),
             ),
@@ -54,10 +64,23 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
     }
 
     /**
+     * @param CommandEvent $event
+     */
+    public function command(CommandEvent $event)
+    {
+        $input = $event->getInput();
+        $this->preferLowest = $input->hasOption('prefer-lowest') && true === $input->getOption('prefer-lowest');
+    }
+
+    /**
      * @param Event $event
      */
     public function postUpdate(Event $event)
     {
+        if (true === $this->preferLowest) {
+            return;
+        }
+
         $this->checkVersions($this->composer->getRepositoryManager(), $this->composer->getPackage());
     }
 
