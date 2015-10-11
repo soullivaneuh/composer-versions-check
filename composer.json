@@ -16,7 +16,8 @@
     },
     "require-dev": {
         "composer/composer": "^1.0",
-        "sllh/php-cs-fixer-styleci-bridge": "^2.0"
+        "sllh/php-cs-fixer-styleci-bridge": "^2.0",
+        "symfony/phpunit-bridge": "^2.7.4|^3.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

@@ -39,6 +39,11 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
     private $preferLowest;
 
     /**
+     * @var array
+     */
+    private $options = array();
+
+    /**
      * {@inheritdoc}
      */
     public function activate(Composer $composer, IOInterface $io)
@@ -46,6 +51,7 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
         $this->composer = $composer;
         $this->io = $io;
         $this->versionsCheck = new VersionsCheck();
+        $this->options = $this->resolveOptions();
     }
 
     /**
@@ -85,6 +91,31 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
     }
 
     /**
+     * Tries to get plugin options and resolves them.
+     *
+     * @return array
+     */
+    private function resolveOptions()
+    {
+        $pluginConfig = $this->composer->getConfig()
+            ? $this->composer->getConfig()->get('sllh-composer-versions-check')
+            : null
+        ;
+
+        $options = array(
+            'show-links' => true,
+        );
+
+        if (null === $pluginConfig) {
+            return $options;
+        }
+
+        $options['show-links'] = isset($pluginConfig['show-links']) ? (bool) $pluginConfig['show-links'] : true;
+
+        return $options;
+    }
+
+    /**
      * @param RepositoryManager    $repositoryManager
      * @param RootPackageInterface $rootPackage
      */
@@ -98,6 +129,6 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
             );
         }
 
-        $this->io->write($this->versionsCheck->getOutput(), false);
+        $this->io->write($this->versionsCheck->getOutput($this->options['show-links']), false);
     }
 }

@@ -2,12 +2,16 @@
 
 namespace SLLH\ComposerVersionsCheck\Tests;
 
+use Composer\Package\Link;
 use Composer\Package\Package;
 use Composer\Package\RootPackage;
 use Composer\Repository\ArrayRepository;
 use Composer\Repository\WritableArrayRepository;
 use SLLH\ComposerVersionsCheck\VersionsCheck;
 
+/**
+ * @author Sullivan Senechal <soullivaneuh@gmail.com>
+ */
 class VersionsCheckTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -110,8 +114,7 @@ EOF
 
         foreach ($packagesData as $name => $packageData) {
             list($actualVersion, $availableVersions, $expectedVersion) = $packageData;
-            $actualPackage = new Package($name, $actualVersion, $actualVersion);
-            $this->localRepository->addPackage($actualPackage);
+            $this->localRepository->addPackage(new Package($name, $actualVersion, $actualVersion));
             foreach ($availableVersions as $availableVersion) {
                 $this->distRepository->addPackage(new Package($name, $availableVersion, $availableVersion));
             }
@@ -133,7 +136,7 @@ EOF
 
 
 EOF
-        , $outdatedPackagesCount, implode("\n", $shouldBeUpdatedOutput)), $this->versionsCheck->getOutput());
+        , $outdatedPackagesCount, implode("\n\n", $shouldBeUpdatedOutput)), $this->versionsCheck->getOutput());
     }
 
     /**
@@ -162,6 +165,42 @@ EOF
                 'vendor/prefer-stable' => array('1.0.1', array('1.0.0', '1.0.1', '2.0.0-alpha1'), false),
             ), true, 3),
         );
+    }
+
+    public function testOutdatedWithLinks()
+    {
+        $this->distRepository->addPackage(new Package('foo/bar', '2.0', '2.0'));
+        $this->localRepository->addPackage(new Package('foo/bar', '1.1', '1.1'));
+
+        $linkedPackage = new Package('dummy/link', '1.0', '1.0');
+        $linkedPackage->setRequires(array(new Link('dummy/link', 'foo/bar', null, '', '1.*')));
+        $this->localRepository->addPackage($linkedPackage);
+
+        // To test root package detection
+        $this->localRepository->addPackage($this->rootPackage);
+
+        $this->checkPackages();
+
+        // Must have one outdatedPackage if this should be updated
+        $this->assertAttributeCount(1, 'outdatedPackages', $this->versionsCheck);
+        $this->assertSame(<<<EOF
+<warning>1 package is not up to date:</warning>
+
+  - <info>foo/bar</info> (<comment>1.1</comment>) latest is <comment>2.0</comment>
+    Required by <info>dummy/link</info> (<comment>1.*</comment>)
+
+
+EOF
+            , $this->versionsCheck->getOutput());
+        // Test with disabled show-links option
+        $this->assertSame(<<<EOF
+<warning>1 package is not up to date:</warning>
+
+  - <info>foo/bar</info> (<comment>1.1</comment>) latest is <comment>2.0</comment>
+
+
+EOF
+            , $this->versionsCheck->getOutput(false));
     }
 
     /**

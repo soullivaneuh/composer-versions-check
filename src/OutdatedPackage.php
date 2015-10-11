@@ -2,6 +2,7 @@
 
 namespace SLLH\ComposerVersionsCheck;
 
+use Composer\Package\Link;
 use Composer\Package\PackageInterface;
 
 /**
@@ -20,13 +21,22 @@ final class OutdatedPackage
     private $last;
 
     /**
+     * @var Link[]
+     */
+    private $links = array();
+
+    /**
      * @param PackageInterface $actual
      * @param PackageInterface $last
+     * @param Link[]           $links
      */
-    public function __construct(PackageInterface $actual, PackageInterface $last)
+    public function __construct(PackageInterface $actual, PackageInterface $last, array $links = null)
     {
         $this->actual = $actual;
         $this->last = $last;
+        if (null !== $links) {
+            $this->links = $links;
+        }
     }
 
     /**
@@ -43,5 +53,13 @@ final class OutdatedPackage
     public function getLast()
     {
         return $this->last;
+    }
+
+    /**
+     * @return Link[]
+     */
+    public function getLinks()
+    {
+        return $this->links;
     }
 }
