@@ -64,7 +64,7 @@ class VersionsCheckTest extends \PHPUnit_Framework_TestCase
             $this->assertSame(sprintf(<<<EOF
 <warning>Some packages are not up to date:</warning>
 
- - <info>foo/bar</info> (<comment>%s</comment>) last version is <comment>%s</comment>
+  - <info>foo/bar</info> (<comment>%s</comment>) last version is <comment>%s</comment>
 
 
 EOF
@@ -117,7 +117,7 @@ EOF
 
             if (false !== $expectedVersion) {
                 $shouldBeUpdatedOutput[] = sprintf(
-                    ' - <info>%s</info> (<comment>%s</comment>) last version is <comment>%s</comment>',
+                    '  - <info>%s</info> (<comment>%s</comment>) last version is <comment>%s</comment>',
                     $name, $actualVersion, $expectedVersion
                 );
             }

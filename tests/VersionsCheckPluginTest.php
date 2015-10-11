@@ -79,7 +79,7 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(<<<EOF
 <warning>Some packages are not up to date:</warning>
 
- - foo/bar (1.0.0) last version is 2.0.0
+  - foo/bar (1.0.0) last version is 2.0.0
 
 
 EOF
@@ -129,7 +129,7 @@ EOF
         $this->assertSame(<<<EOF
 <warning>Some packages are not up to date:</warning>
 
- - foo/bar (1.0.0) last version is 2.0.0
+  - foo/bar (1.0.0) last version is 2.0.0
 
 
 EOF
