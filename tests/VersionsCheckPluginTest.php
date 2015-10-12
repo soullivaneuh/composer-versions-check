@@ -77,7 +77,7 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
         $this->composer->getEventDispatcher()->dispatchScript(ScriptEvents::POST_UPDATE_CMD);
 
         $this->assertSame(<<<EOF
-<warning>Some packages are not up to date:</warning>
+<warning>1 package is not up to date:</warning>
 
   - foo/bar (1.0.0) last version is 2.0.0
 
@@ -127,7 +127,7 @@ EOF
         $this->composer->getEventDispatcher()->dispatchScript(ScriptEvents::POST_UPDATE_CMD);
 
         $this->assertSame(<<<EOF
-<warning>Some packages are not up to date:</warning>
+<warning>1 package is not up to date:</warning>
 
   - foo/bar (1.0.0) last version is 2.0.0
 

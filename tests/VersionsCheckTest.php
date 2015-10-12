@@ -62,7 +62,7 @@ class VersionsCheckTest extends \PHPUnit_Framework_TestCase
         if (true === $shouldBeUpdated) {
             $this->assertAttributeCount(1, 'outdatedPackages', $this->versionsCheck);
             $this->assertSame(sprintf(<<<EOF
-<warning>Some packages are not up to date:</warning>
+<warning>1 package is not up to date:</warning>
 
   - <info>foo/bar</info> (<comment>%s</comment>) last version is <comment>%s</comment>
 
@@ -99,8 +99,9 @@ EOF
      *
      * @param array $packagesData
      * @param bool  $preferStable
+     * @param int   $outdatedPackagesCount
      */
-    public function testMultiplePackagesComparison(array $packagesData, $preferStable = false)
+    public function testMultiplePackagesComparison(array $packagesData, $preferStable = false, $outdatedPackagesCount)
     {
         $this->rootPackage->setMinimumStability('dev');
         $this->rootPackage->setPreferStable($preferStable);
@@ -126,13 +127,13 @@ EOF
         $this->checkPackages();
 
         $this->assertSame(sprintf(<<<EOF
-<warning>Some packages are not up to date:</warning>
+<warning>%d packages are not up to date:</warning>
 
 %s
 
 
 EOF
-        , implode("\n", $shouldBeUpdatedOutput)), $this->versionsCheck->getOutput());
+        , $outdatedPackagesCount, implode("\n", $shouldBeUpdatedOutput)), $this->versionsCheck->getOutput());
     }
 
     /**
@@ -150,7 +151,7 @@ EOF
                 'vendor/package-2'     => array('1.0.0', array('1.0.0', '1.0.1', '2.0.0', '2.0.0-alpha1'), '2.0.0'),
                 'vendor/package-3'     => array('1.0.1', array('1.0.0', '1.0.1', '2.0.0-alpha1'), '2.0.0-alpha1'),
                 'vendor/prefer-stable' => array('1.0.1', array('1.0.0', '1.0.1', '2.0.0-alpha1'), '2.0.0-alpha1'),
-            ), false),
+            ), false, 6),
             array(array(
                 'foo/bar'              => array('1.0.0', array('1.0.0', '1.0.1', '1.0.2', '1.0.4', '2.0.0'), '2.0.0'),
                 'some/package'         => array('1.0.4', array('1.0.0', '1.0.1', '1.0.2', '1.0.4', '2.0.0'), '2.0.0'),
@@ -159,7 +160,7 @@ EOF
                 'vendor/package-2'     => array('1.0.0', array('1.0.0', '1.0.1', '2.0.0', '2.0.0-alpha1'), '2.0.0'),
                 'vendor/package-3'     => array('1.0.1', array('1.0.0', '1.0.1', '2.0.0-alpha1'), false),
                 'vendor/prefer-stable' => array('1.0.1', array('1.0.0', '1.0.1', '2.0.0-alpha1'), false),
-            ), true),
+            ), true, 3),
         );
     }
 
