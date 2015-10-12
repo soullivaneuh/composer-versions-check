@@ -101,7 +101,12 @@ final class VersionsCheck
 
     private function createNotUpToDateOutput(array &$output)
     {
-        $output[] = '<warning>Some packages are not up to date:</warning>';
+        $outdatedPackagesCount = count($this->outdatedPackages);
+        $output[] = sprintf(
+            '<warning>%d %s not up to date:</warning>',
+            $outdatedPackagesCount,
+            1 != $outdatedPackagesCount ? 'packages are' : 'package is'
+        );
         $output[] = '';
 
         foreach ($this->outdatedPackages as $outdatedPackage) {
