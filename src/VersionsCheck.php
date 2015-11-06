@@ -111,7 +111,7 @@ final class VersionsCheck
 
         foreach ($this->outdatedPackages as $outdatedPackage) {
             $output[] = sprintf(
-                '  - <info>%s</info> (<comment>%s</comment>) last version is <comment>%s</comment>',
+                '  - <info>%s</info> (<comment>%s</comment>) latest is <comment>%s</comment>',
                 $outdatedPackage->getActual()->getPrettyName(),
                 $outdatedPackage->getActual()->getPrettyVersion(),
                 $outdatedPackage->getLast()->getPrettyVersion()
