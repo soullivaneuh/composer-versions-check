@@ -11,6 +11,7 @@ use Composer\Package\Package;
 use Composer\Package\RootPackage;
 use Composer\Plugin\CommandEvent;
 use Composer\Plugin\PluginEvents;
+use Composer\Plugin\PluginInterface;
 use Composer\Plugin\PluginManager;
 use Composer\Repository\ArrayRepository;
 use Composer\Repository\RepositoryManager;
@@ -52,7 +53,7 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
     public function testPluginRegister()
     {
         $plugin = new VersionsCheckPlugin();
-        $this->composer->getPluginManager()->addPlugin($plugin);
+        $this->addComposerPlugin($plugin);
 
         $this->assertSame(array($plugin), $this->composer->getPluginManager()->getPlugins());
         $this->assertAttributeInstanceOf('Composer\Composer', 'composer', $plugin);
@@ -62,7 +63,7 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
 
     public function testUpdateCommand()
     {
-        $this->composer->getPluginManager()->addPlugin(new VersionsCheckPlugin());
+        $this->addComposerPlugin(new VersionsCheckPlugin());
 
         $localRepository = new WritableArrayRepository();
         $localRepository->addPackage(new Package('foo/bar', '1.0.0', '1.0.0'));
@@ -88,7 +89,7 @@ EOF
 
     public function testPreferLowest()
     {
-        $this->composer->getPluginManager()->addPlugin(new VersionsCheckPlugin());
+        $this->addComposerPlugin(new VersionsCheckPlugin());
 
         $localRepository = new WritableArrayRepository();
         $localRepository->addPackage(new Package('foo/bar', '1.0.0', '1.0.0'));
@@ -111,7 +112,7 @@ EOF
 
     public function testPreferLowestNotExists()
     {
-        $this->composer->getPluginManager()->addPlugin(new VersionsCheckPlugin());
+        $this->addComposerPlugin(new VersionsCheckPlugin());
 
         $localRepository = new WritableArrayRepository();
         $localRepository->addPackage(new Package('foo/bar', '1.0.0', '1.0.0'));
@@ -134,5 +135,13 @@ EOF
 
 EOF
             , $this->io->getOutput());
+    }
+
+    private function addComposerPlugin(PluginInterface $plugin)
+    {
+        $pluginManagerReflection = new \ReflectionClass($this->composer->getPluginManager());
+        $addPluginReflection = $pluginManagerReflection->getMethod('addPlugin');
+        $addPluginReflection->setAccessible(true);
+        $addPluginReflection->invoke($this->composer->getPluginManager(), $plugin);
     }
 }
