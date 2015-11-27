@@ -23,8 +23,6 @@ matrix:
       env: WITHOUT_SEMVER=1
   allow_failures:
     - php: nightly
-    - php: hhvm
-    - php: hhvm-nightly
 
 sudo: false
 
