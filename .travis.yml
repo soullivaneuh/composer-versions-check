@@ -20,6 +20,8 @@ matrix:
       env: COMPOSER_FLAGS="--prefer-lowest"
     # Special case for https://github.com/Soullivaneuh/composer-versions-check/issues/8
     - php: 5.6
+      env: COMPOSER_VERSION=dev-master
+    - php: 5.6
       env: WITHOUT_SEMVER=1
   allow_failures:
     - php: nightly
@@ -31,10 +33,9 @@ cache:
     - $HOME/.composer/cache/files
 
 before_install:
-  - composer selfupdate
   - composer config -g github-oauth.github.com $GITHUB_OAUTH_TOKEN
-  - composer global require phpunit/phpunit:^4.8 --no-update
-  - if [ "$PHP_CS_FIXER_VERSION" != "" ]; then composer require "fabpot/php-cs-fixer:${PHP_CS_FIXER_VERSION}" --no-update; fi;
+  - composer global require phpunit/phpunit:@stable satooshi/php-coveralls:@stable codeclimate/php-test-reporter:@stable --no-update
+  - if [ "$COMPOSER_VERSION" != "" ]; then composer require "composer/composer:${COMPOSER_VERSION}" --no-update; fi;
   - if [ "$WITHOUT_SEMVER" = 1 ]; then composer require "composer/composer:dev-master#013a748" --no-update; fi;
 
 install:
@@ -44,8 +45,8 @@ install:
 before_script:
   - if [ "$WITHOUT_SEMVER" = 1 ]; then rm -rf vendor/composer/semver; fi;
 
-script: make test
+script: phpunit -c phpunit.xml.dist --coverage-clover build/logs/clover.xml
 
 after_script:
-  - php vendor/bin/coveralls -v
-  - php vendor/bin/test-reporter
+  - coveralls -v
+  - test-reporter

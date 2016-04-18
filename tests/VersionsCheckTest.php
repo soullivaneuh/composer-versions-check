@@ -61,7 +61,7 @@ class VersionsCheckTest extends \PHPUnit_Framework_TestCase
         // Must have one outdatedPackage if this should be updated
         if (true === $shouldBeUpdated) {
             $this->assertAttributeCount(1, 'outdatedPackages', $this->versionsCheck);
-            $this->assertSame(sprintf(<<<EOF
+            $this->assertSame(sprintf(<<<'EOF'
 <warning>1 package is not up to date:</warning>
 
   - <info>foo/bar</info> (<comment>%s</comment>) latest is <comment>%s</comment>
@@ -101,7 +101,7 @@ EOF
      * @param bool  $preferStable
      * @param int   $outdatedPackagesCount
      */
-    public function testMultiplePackagesComparison(array $packagesData, $preferStable = false, $outdatedPackagesCount)
+    public function testMultiplePackagesComparison(array $packagesData, $preferStable, $outdatedPackagesCount)
     {
         $this->rootPackage->setMinimumStability('dev');
         $this->rootPackage->setPreferStable($preferStable);
@@ -126,7 +126,7 @@ EOF
 
         $this->checkPackages();
 
-        $this->assertSame(sprintf(<<<EOF
+        $this->assertSame(sprintf(<<<'EOF'
 <warning>%d packages are not up to date:</warning>
 
 %s

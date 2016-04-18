@@ -44,6 +44,7 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
     {
         $this->io = new BufferIO();
         $this->composer = new Composer();
+        $this->composer->setConfig(new Config());
         $this->composer->setPackage(new RootPackage('my/project', '1.0.0', '1.0.0'));
         $this->composer->setPluginManager(new PluginManager($this->io, $this->composer));
         $this->composer->setEventDispatcher(new EventDispatcher($this->composer, $this->io));
@@ -77,7 +78,7 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
 
         $this->composer->getEventDispatcher()->dispatchScript(ScriptEvents::POST_UPDATE_CMD);
 
-        $this->assertSame(<<<EOF
+        $this->assertSame(<<<'EOF'
 <warning>1 package is not up to date:</warning>
 
   - foo/bar (1.0.0) latest is 2.0.0
@@ -127,7 +128,7 @@ EOF
         $this->composer->getEventDispatcher()->dispatch($commandEvent->getName(), $commandEvent);
         $this->composer->getEventDispatcher()->dispatchScript(ScriptEvents::POST_UPDATE_CMD);
 
-        $this->assertSame(<<<EOF
+        $this->assertSame(<<<'EOF'
 <warning>1 package is not up to date:</warning>
 
   - foo/bar (1.0.0) latest is 2.0.0
