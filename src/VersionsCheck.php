@@ -2,6 +2,7 @@
 
 namespace SLLH\ComposerVersionsCheck;
 
+use Composer\Package\AliasPackage;
 use Composer\Package\LinkConstraint\VersionConstraint;
 use Composer\Package\PackageInterface;
 use Composer\Package\RootPackageInterface;
@@ -34,6 +35,11 @@ final class VersionsCheck
     {
         $packages = $localRepository->getPackages();
         foreach ($packages as $package) {
+            // Get source of alias packages to have real used version.
+            if ($package instanceof AliasPackage) {
+                $package = $package->getAliasOf();
+            }
+
             // Old composer versions BC
             $versionConstraint = class_exists('Composer\Semver\Constraint\Constraint')
                 ? new Constraint('>', $package->getVersion())
