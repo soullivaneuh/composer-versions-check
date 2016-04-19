@@ -18,6 +18,8 @@ use Composer\Script\ScriptEvents;
  */
 final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInterface
 {
+    const COMPOSER_MIN_VERSION = '1.0.0';
+
     /**
      * @var Composer
      */
@@ -48,6 +50,14 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
      */
     public function activate(Composer $composer, IOInterface $io)
     {
+        if (version_compare(Composer::VERSION, self::COMPOSER_MIN_VERSION, '<')) {
+            throw new \RuntimeException(sprintf(
+                'Composer v%s is not supported, please upgrade to v%s or higher.',
+                Composer::VERSION,
+                self::COMPOSER_MIN_VERSION
+            ));
+        }
+
         $this->composer = $composer;
         $this->io = $io;
         $this->versionsCheck = new VersionsCheck();
