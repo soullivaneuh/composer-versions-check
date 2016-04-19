@@ -183,7 +183,7 @@ EOF
 
         // Must have one outdatedPackage if this should be updated
         $this->assertAttributeCount(1, 'outdatedPackages', $this->versionsCheck);
-        $this->assertSame(<<<EOF
+        $this->assertSame(<<<'EOF'
 <warning>1 package is not up to date:</warning>
 
   - <info>foo/bar</info> (<comment>1.1</comment>) latest is <comment>2.0</comment>
@@ -193,7 +193,7 @@ EOF
 EOF
             , $this->versionsCheck->getOutput());
         // Test with disabled show-links option
-        $this->assertSame(<<<EOF
+        $this->assertSame(<<<'EOF'
 <warning>1 package is not up to date:</warning>
 
   - <info>foo/bar</info> (<comment>1.1</comment>) latest is <comment>2.0</comment>
