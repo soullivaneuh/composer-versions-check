@@ -253,7 +253,7 @@ EOF
     private function assertSameOutput($expectedOutput, $message = '')
     {
         if ('@package_version@' === Composer::VERSION) {
-            $expectedOutput = "<warning>You are running an unstable version of composer."
+            $expectedOutput = '<warning>You are running an unstable version of composer.'
                 ." The sllh/composer-versions-check plugin might not works as expected.</warning>\n"
                 .$expectedOutput;
         }
