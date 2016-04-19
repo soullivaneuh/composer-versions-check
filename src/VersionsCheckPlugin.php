@@ -12,12 +12,15 @@ use Composer\Plugin\PluginInterface;
 use Composer\Repository\RepositoryManager;
 use Composer\Script\Event;
 use Composer\Script\ScriptEvents;
+use Composer\Semver\Semver;
 
 /**
  * @author Sullivan Senechal <soullivaneuh@gmail.com>
  */
 final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInterface
 {
+    const COMPOSER_MIN_VERSION = '1.0.0-stable';
+
     /**
      * @var Composer
      */
@@ -48,6 +51,19 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
      */
     public function activate(Composer $composer, IOInterface $io)
     {
+        if (!static::satisfiesComposerVersion()) {
+            $io->writeError(sprintf(
+                '<error>Composer v%s is not supported by sllh/composer-versions-check plugin,'
+                .' please upgrade to v%s or higher.</error>',
+                Composer::VERSION,
+                self::COMPOSER_MIN_VERSION
+            ));
+        }
+        if ('@package_version@' === Composer::VERSION) {
+            $io->write('<warning>You are running an unstable version of composer.'
+                .' The sllh/composer-versions-check plugin might not works as expected.</warning>');
+        }
+
         $this->composer = $composer;
         $this->io = $io;
         $this->versionsCheck = new VersionsCheck();
@@ -59,6 +75,11 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
      */
     public static function getSubscribedEvents()
     {
+        // Do not subscribe the plugin if not compatible.
+        if (!static::satisfiesComposerVersion()) {
+            return array();
+        }
+
         return array(
             PluginEvents::COMMAND => array(
                 array('command'),
@@ -67,6 +88,19 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
                 array('postUpdate', -100),
             ),
         );
+    }
+
+    /**
+     * @return bool
+     */
+    public static function satisfiesComposerVersion()
+    {
+        // Can't determine version. Assuming it satisfies.
+        if ('@package_version@' === Composer::VERSION) {
+            return true;
+        }
+
+        return Semver::satisfies(Composer::VERSION, sprintf('>=%s', static::COMPOSER_MIN_VERSION));
     }
 
     /**

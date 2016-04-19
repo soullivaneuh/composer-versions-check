@@ -46,6 +46,10 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
+        if (!VersionsCheckPlugin::satisfiesComposerVersion()) {
+            $this->markTestSkipped('Composer version not compatible.');
+        }
+
         $this->io = new BufferIO();
         $this->composer = $this->getMock('Composer\Composer');
         $this->config = new Config(false);
@@ -182,14 +186,14 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
 
         $this->composer->getEventDispatcher()->dispatchScript(ScriptEvents::POST_UPDATE_CMD);
 
-        $this->assertSame(<<<'EOF'
+        $this->assertSameOutput(<<<'EOF'
 <warning>1 package is not up to date:</warning>
 
   - foo/bar (1.0.0) latest is 2.0.0
 
 
 EOF
-            , $this->io->getOutput());
+);
     }
 
     public function testPreferLowest()
@@ -212,7 +216,7 @@ EOF
         $this->composer->getEventDispatcher()->dispatch($commandEvent->getName(), $commandEvent);
         $this->composer->getEventDispatcher()->dispatchScript(ScriptEvents::POST_UPDATE_CMD);
 
-        $this->assertSame('', $this->io->getOutput(), 'Plugin should not be runned.');
+        $this->assertSameOutput('', 'Plugin should not be runned.');
     }
 
     public function testPreferLowestNotExists()
@@ -232,14 +236,14 @@ EOF
         $this->composer->getEventDispatcher()->dispatch($commandEvent->getName(), $commandEvent);
         $this->composer->getEventDispatcher()->dispatchScript(ScriptEvents::POST_UPDATE_CMD);
 
-        $this->assertSame(<<<'EOF'
+        $this->assertSameOutput(<<<'EOF'
 <warning>1 package is not up to date:</warning>
 
   - foo/bar (1.0.0) latest is 2.0.0
 
 
 EOF
-            , $this->io->getOutput());
+);
     }
 
     private function addComposerPlugin(PluginInterface $plugin)
@@ -248,5 +252,16 @@ EOF
         $addPluginReflection = $pluginManagerReflection->getMethod('addPlugin');
         $addPluginReflection->setAccessible(true);
         $addPluginReflection->invoke($this->composer->getPluginManager(), $plugin);
+    }
+
+    private function assertSameOutput($expectedOutput, $message = '')
+    {
+        if ('@package_version@' === Composer::VERSION) {
+            $expectedOutput = '<warning>You are running an unstable version of composer.'
+                ." The sllh/composer-versions-check plugin might not works as expected.</warning>\n"
+                .$expectedOutput;
+        }
+
+        $this->assertSame($expectedOutput, $this->io->getOutput(), $message);
     }
 }
