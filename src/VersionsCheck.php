@@ -52,12 +52,9 @@ final class VersionsCheck
 
             // We got higher packages! Let's push it.
             if (count($higherPackages) > 0) {
-                // PHP 5.3 BC
-                $that = $this;
-
                 // Sort packages by highest version to lowest
-                usort($higherPackages, function (PackageInterface $p1, PackageInterface $p2) use ($that) {
-                    return $that->versionCompare($p1->getVersion(), '<', $p2->getVersion());
+                usort($higherPackages, function (PackageInterface $p1, PackageInterface $p2) {
+                    return Comparator::compare($p1->getVersion(), '<', $p2->getVersion());
                 });
 
                 // Push actual and last package on outdated array
@@ -82,29 +79,6 @@ final class VersionsCheck
         }
 
         return implode(PHP_EOL, $output).PHP_EOL;
-    }
-
-    /**
-     * Version comparator bridge to handle BC with old composer versions.
-     *
-     * This method is public only for PHP 5.3 BC and SHOULD NOT be used.
-     * Deprecate it and remove it on next major when PHP 5.3 support will be droped.
-     *
-     * @param string $version1
-     * @param string $operator
-     * @param string $version2
-     *
-     * @return bool
-     */
-    public function versionCompare($version1, $operator, $version2)
-    {
-        if (!class_exists('Composer\Semver\Comparator')) {
-            $this->oldComparator = $this->oldComparator ?: new VersionConstraint('==', '1.0');
-
-            return $this->oldComparator->versionCompare($version1, $version2, $operator);
-        }
-
-        return Comparator::compare($version1, $operator, $version2);
     }
 
     /**
