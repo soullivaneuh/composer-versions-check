@@ -98,7 +98,7 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
             return true;
         }
 
-        return version_compare(Composer::VERSION, self::COMPOSER_MIN_VERSION, '>');
+        return version_compare(Composer::VERSION, self::COMPOSER_MIN_VERSION, '>=');
     }
 
     /**
