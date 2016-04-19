@@ -44,6 +44,8 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
         $this->io = new BufferIO();
         $this->composer = $this->getMock('Composer\Composer');
 
+        $this->composer->expects($this->any())->method('getConfig')
+            ->willReturn(new Config());
         $this->composer->expects($this->any())->method('getPackage')
             ->willReturn(new RootPackage('my/project', '1.0.0', '1.0.0'));
         $this->composer->expects($this->any())->method('getPluginManager')
