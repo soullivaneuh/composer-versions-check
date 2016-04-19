@@ -17,7 +17,6 @@ use Composer\Repository\ArrayRepository;
 use Composer\Repository\RepositoryManager;
 use Composer\Repository\WritableArrayRepository;
 use Composer\Script\ScriptEvents;
-use SLLH\ComposerVersionsCheck\VersionsCheck;
 use SLLH\ComposerVersionsCheck\VersionsCheckPlugin;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
@@ -33,9 +32,14 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
     private $io;
 
     /**
-     * @var Composer
+     * @var Composer|\PHPUnit_Framework_MockObject_MockObject
      */
     private $composer;
+
+    /**
+     * @var Config
+     */
+    private $config;
 
     /**
      * {@inheritdoc}
@@ -43,12 +47,112 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->io = new BufferIO();
-        $this->composer = new Composer();
-        $this->composer->setConfig(new Config());
-        $this->composer->setPackage(new RootPackage('my/project', '1.0.0', '1.0.0'));
-        $this->composer->setPluginManager(new PluginManager($this->io, $this->composer));
-        $this->composer->setEventDispatcher(new EventDispatcher($this->composer, $this->io));
-        $this->composer->setRepositoryManager(new RepositoryManager($this->io, new Config()));
+        $this->composer = $this->getMock('Composer\Composer');
+        $this->config = new Config(false);
+
+        $this->composer->expects($this->any())->method('getConfig')
+            ->willReturn($this->config);
+        $this->composer->expects($this->any())->method('getPackage')
+            ->willReturn(new RootPackage('my/project', '1.0.0', '1.0.0'));
+        $this->composer->expects($this->any())->method('getPluginManager')
+            ->willReturn(new PluginManager($this->io, $this->composer));
+        $this->composer->expects($this->any())->method('getEventDispatcher')
+            ->willReturn(new EventDispatcher($this->composer, $this->io));
+        $this->composer->expects($this->any())->method('getRepositoryManager')
+            ->willReturn(new RepositoryManager($this->io, new Config()));
+    }
+
+    /**
+     * @dataProvider getTestOptionsData
+     *
+     * @param array|null $configData
+     * @param array      $expectedOptions
+     */
+    public function testOptions($configData, array $expectedOptions)
+    {
+        if (null === $configData) {
+            $this->composer->expects($this->any())->method('getConfig')
+                ->willReturn(null);
+        } else {
+            $this->config->merge($configData);
+        }
+
+        $plugin = new VersionsCheckPlugin();
+        $plugin->activate($this->composer, $this->io);
+
+        $this->assertAttributeSame($expectedOptions, 'options', $plugin);
+    }
+
+    public function getTestOptionsData()
+    {
+        return array(
+            'No option' => array(
+                null,
+                array(
+                    'show-links' => true,
+                ),
+            ),
+            'Empty array options' => array(
+                array(),
+                array(
+                    'show-links' => true,
+                ),
+            ),
+            'Empty array plugin options' => array(
+                array(
+                    'config' => array(
+                        'sllh-composer-versions-check' => array(),
+                    ),
+                ),
+                array(
+                    'show-links' => true,
+                ),
+            ),
+            'Empty plugin options' => array(
+                array(
+                    'config' => array(
+                        'sllh-composer-versions-check' => null,
+                    ),
+                ),
+                array(
+                    'show-links' => true,
+                ),
+            ),
+            'False plugin options' => array(
+                array(
+                    'config' => array(
+                        'sllh-composer-versions-check' => false,
+                    ),
+                ),
+                array(
+                    'show-links' => true,
+                ),
+            ),
+            'Activate show-links' => array(
+                array(
+                    'config' => array(
+                        'sllh-composer-versions-check' => array(
+                            'show-links' => true,
+                        ),
+                    ),
+                ),
+                array(
+                    'show-links' => true,
+                ),
+            ),
+            'Disable show-links' => array(
+                array(
+                    'config' => array(
+                        'sllh-composer-versions-check' => array(
+                            'show-links' => false,
+                        ),
+                    ),
+                ),
+                array(
+                    'show-links' => false,
+                ),
+            ),
+        );
     }
 
     public function testPluginRegister()

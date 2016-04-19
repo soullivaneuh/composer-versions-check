@@ -2,7 +2,7 @@
 
 composer-versions-check is a plugin for Composer.
 
-It warns user for outdated packages from last major versions after update command. 
+It warns user for outdated packages from last major versions after update command.
 
 [![Latest Stable Version](https://poser.pugx.org/sllh/composer-versions-check/v/stable)](https://packagist.org/packages/sllh/composer-versions-check)
 [![Latest Unstable Version](https://poser.pugx.org/sllh/composer-versions-check/v/unstable)](https://packagist.org/packages/sllh/composer-versions-check)
@@ -20,7 +20,7 @@ It warns user for outdated packages from last major versions after update comman
 [![Coverage Status](https://coveralls.io/repos/Soullivaneuh/composer-versions-check/badge.svg?branch=master)](https://coveralls.io/r/Soullivaneuh/composer-versions-check?branch=master)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/278a8379-fb6d-425f-b175-7d7b9ef93d47/mini.png)](https://insight.sensiolabs.com/projects/278a8379-fb6d-425f-b175-7d7b9ef93d47)
 
-![composer-versions-check_demo](https://cloud.githubusercontent.com/assets/1698357/10285107/a4a46bc6-6b87-11e5-9bee-35e7259bf380.gif)
+![composer-versions-check_demo](https://cloud.githubusercontent.com/assets/1698357/14637529/2e32a778-0632-11e6-99c7-0e1c284a7436.gif)
 
 <sup>Screencast provided by [Silentcast](https://github.com/colinkeenan/silentcast).</sup>
 
@@ -43,3 +43,19 @@ composer require sllh/composer-versions-check
 That's it! Composer will enable automatically the plugin as soon it's installed.
 
 Just run `composer update` command to see the plugin working.
+
+## Configuration
+
+You can configure the plugin via the [`COMPOSER_HOME/config.json`](https://getcomposer.org/doc/03-cli.md#composer-home) file. Here is the default one:
+
+```json
+{
+    "config": {
+        "sllh-composer-versions-check": {
+            "show-links": true
+        }
+    }
+}
+```
+
+* `show-links`: Shows outdated package links. Set to `false` to get a shorter output.

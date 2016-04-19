@@ -2,6 +2,7 @@
 
 namespace SLLH\ComposerVersionsCheck;
 
+use Composer\Package\Link;
 use Composer\Package\LinkConstraint\VersionConstraint;
 use Composer\Package\PackageInterface;
 use Composer\Package\RootPackageInterface;
@@ -41,36 +42,43 @@ final class VersionsCheck
             ;
 
             $higherPackages = $distRepository->findPackages($package->getName(), $versionConstraint);
+
             // Remove not stable packages if unwanted
             if (true === $rootPackage->getPreferStable()) {
                 $higherPackages = array_filter($higherPackages, function (PackageInterface $package) {
                     return 'stable' === $package->getStability();
                 });
             }
+
+            // We got higher packages! Let's push it.
             if (count($higherPackages) > 0) {
                 // PHP 5.3 BC
                 $that = $this;
+
                 // Sort packages by highest version to lowest
                 usort($higherPackages, function (PackageInterface $p1, PackageInterface $p2) use ($that) {
                     return $that->versionCompare($p1->getVersion(), '<', $p2->getVersion());
                 });
+
                 // Push actual and last package on outdated array
-                array_push($this->outdatedPackages, new OutdatedPackage($package, $higherPackages[0]));
+                array_push($this->outdatedPackages, new OutdatedPackage($package, $higherPackages[0], $this->getPackageDepends($localRepository, $package)));
             }
         }
     }
 
     /**
+     * @param bool $showDepends
+     *
      * @return string
      */
-    public function getOutput()
+    public function getOutput($showDepends = true)
     {
         $output = array();
 
         if (0 === count($this->outdatedPackages)) {
             $output[] = '<info>All packages are up to date.</info>';
         } else {
-            $this->createNotUpToDateOutput($output);
+            $this->createNotUpToDateOutput($output, $showDepends);
         }
 
         return implode(PHP_EOL, $output).PHP_EOL;
@@ -99,7 +107,37 @@ final class VersionsCheck
         return Comparator::compare($version1, $operator, $version2);
     }
 
-    private function createNotUpToDateOutput(array &$output)
+    /**
+     * @param WritableRepositoryInterface $localRepository
+     * @param PackageInterface            $needle
+     *
+     * @return Link[]
+     */
+    private function getPackageDepends(WritableRepositoryInterface $localRepository, PackageInterface $needle)
+    {
+        $depends = array();
+
+        foreach ($localRepository->getPackages() as $package) {
+            // Skip root package
+            if ($package instanceof RootPackageInterface) {
+                continue;
+            }
+
+            foreach ($package->getRequires() as $link) {
+                if ($link->getTarget() === $needle->getName() && !in_array($link, $depends, true)) {
+                    $depends[] = $link;
+                }
+            }
+        }
+
+        return $depends;
+    }
+
+    /**
+     * @param array $output
+     * @param bool  $showLinks
+     */
+    private function createNotUpToDateOutput(array &$output, $showLinks = true)
     {
         $outdatedPackagesCount = count($this->outdatedPackages);
         $output[] = sprintf(
@@ -116,8 +154,18 @@ final class VersionsCheck
                 $outdatedPackage->getActual()->getPrettyVersion(),
                 $outdatedPackage->getLast()->getPrettyVersion()
             );
-        }
 
-        $output[] = '';
+            if (true === $showLinks) {
+                foreach ($outdatedPackage->getLinks() as $depend) {
+                    $output[] = sprintf(
+                        '    Required by <info>%s</info> (<comment>%s</comment>)',
+                        $depend->getSource(),
+                        $depend->getPrettyConstraint()
+                    );
+                }
+            }
+
+            $output[] = '';
+        }
     }
 }
