@@ -59,7 +59,7 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
             ));
         }
         if ('@package_version@' === Composer::VERSION) {
-            $io->writeError('<warning>You are running an unstable version of composer.'
+            $io->write('<warning>You are running an unstable version of composer.'
                 .' The sllh/composer-versions-check plugin might not works as expected.</warning>');
         }
 
