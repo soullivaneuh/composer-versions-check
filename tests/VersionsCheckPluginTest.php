@@ -93,13 +93,13 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
             'No option' => array(
                 null,
                 array(
-                    'show-links' => true,
+                    'show-links' => false,
                 ),
             ),
             'Empty array options' => array(
                 array(),
                 array(
-                    'show-links' => true,
+                    'show-links' => false,
                 ),
             ),
             'Empty array plugin options' => array(
@@ -109,7 +109,7 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
                     ),
                 ),
                 array(
-                    'show-links' => true,
+                    'show-links' => false,
                 ),
             ),
             'Empty plugin options' => array(
@@ -119,7 +119,7 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
                     ),
                 ),
                 array(
-                    'show-links' => true,
+                    'show-links' => false,
                 ),
             ),
             'False plugin options' => array(
@@ -129,7 +129,7 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
                     ),
                 ),
                 array(
-                    'show-links' => true,
+                    'show-links' => false,
                 ),
             ),
             'Activate show-links' => array(

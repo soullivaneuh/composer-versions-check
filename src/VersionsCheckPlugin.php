@@ -137,14 +137,14 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
         ;
 
         $options = array(
-            'show-links' => true,
+            'show-links' => false,
         );
 
         if (null === $pluginConfig) {
             return $options;
         }
 
-        $options['show-links'] = isset($pluginConfig['show-links']) ? (bool) $pluginConfig['show-links'] : true;
+        $options['show-links'] = isset($pluginConfig['show-links']) ? (bool) $pluginConfig['show-links'] : $options['show-links'];
 
         return $options;
     }
