@@ -14,10 +14,10 @@ It warns user for outdated packages from last major versions after update comman
 [![Monthly Downloads](https://poser.pugx.org/sllh/composer-versions-check/d/monthly)](https://packagist.org/packages/sllh/composer-versions-check)
 [![Daily Downloads](https://poser.pugx.org/sllh/composer-versions-check/d/daily)](https://packagist.org/packages/sllh/composer-versions-check)
 
-[![Build Status](https://travis-ci.org/Soullivaneuh/composer-versions-check.svg?branch=1.x)](https://travis-ci.org/Soullivaneuh/composer-versions-check)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Soullivaneuh/composer-versions-check/badges/quality-score.png?b=1.x)](https://scrutinizer-ci.com/g/Soullivaneuh/composer-versions-check/?branch=1.x)
+[![Build Status](https://travis-ci.org/Soullivaneuh/composer-versions-check.svg?branch=master)](https://travis-ci.org/Soullivaneuh/composer-versions-check)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Soullivaneuh/composer-versions-check/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Soullivaneuh/composer-versions-check/?branch=master)
 [![Code Climate](https://codeclimate.com/github/Soullivaneuh/composer-versions-check/badges/gpa.svg)](https://codeclimate.com/github/Soullivaneuh/composer-versions-check)
-[![Coverage Status](https://coveralls.io/repos/Soullivaneuh/composer-versions-check/badge.svg?branch=1.x)](https://coveralls.io/r/Soullivaneuh/composer-versions-check?branch=1.x)
+[![Coverage Status](https://coveralls.io/repos/Soullivaneuh/composer-versions-check/badge.svg?branch=master)](https://coveralls.io/r/Soullivaneuh/composer-versions-check?branch=master)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/278a8379-fb6d-425f-b175-7d7b9ef93d47/mini.png)](https://insight.sensiolabs.com/projects/278a8379-fb6d-425f-b175-7d7b9ef93d47)
 
 ![composer-versions-check_demo](https://cloud.githubusercontent.com/assets/1698357/14637529/2e32a778-0632-11e6-99c7-0e1c284a7436.gif)
