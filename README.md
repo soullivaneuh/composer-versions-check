@@ -20,7 +20,7 @@ It warns user for outdated packages from last major versions after update comman
 [![Coverage Status](https://coveralls.io/repos/Soullivaneuh/composer-versions-check/badge.svg?branch=master)](https://coveralls.io/r/Soullivaneuh/composer-versions-check?branch=master)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/278a8379-fb6d-425f-b175-7d7b9ef93d47/mini.png)](https://insight.sensiolabs.com/projects/278a8379-fb6d-425f-b175-7d7b9ef93d47)
 
-![composer-versions-check_demo](https://cloud.githubusercontent.com/assets/1698357/10285107/a4a46bc6-6b87-11e5-9bee-35e7259bf380.gif)
+![composer-versions-check_demo](https://cloud.githubusercontent.com/assets/1698357/14637529/2e32a778-0632-11e6-99c7-0e1c284a7436.gif)
 
 <sup>Screencast provided by [Silentcast](https://github.com/colinkeenan/silentcast).</sup>
 
