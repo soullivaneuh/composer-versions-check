@@ -71,7 +71,7 @@ class VersionsCheckPluginComposerVersionTest extends \PHPUnit_Framework_TestCase
         $this->composer->getEventDispatcher()->dispatchScript(ScriptEvents::POST_UPDATE_CMD);
 
         if (VersionsCheckPlugin::satisfiesComposerVersion()) {
-            $this->assertSame('', $this->io->getOutput());
+            $this->assertSame("All packages are up to date.\n", $this->io->getOutput());
         } else {
             $this->assertSame(
                 'Composer v'.Composer::VERSION.' is not supported by sllh/composer-versions-check plugin, please upgrade to v'.VersionsCheckPlugin::COMPOSER_MIN_VERSION." or higher.\n",
