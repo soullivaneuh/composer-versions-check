@@ -1,5 +1,11 @@
 # CHANGELOG
 
+* 2.0.0 (2016-04-19)
+
+ * Composer version compatibility check.
+ * Remove composer BC version compare method.
+ * Disable `show-links` option by default.
+
 * 1.1.0 (2016-04-19)
 
  * More tiny and sexy outdated output words.
