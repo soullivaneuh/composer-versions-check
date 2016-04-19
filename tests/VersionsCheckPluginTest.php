@@ -37,15 +37,21 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
     private $composer;
 
     /**
+     * @var Config
+     */
+    private $config;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
         $this->io = new BufferIO();
         $this->composer = $this->getMock('Composer\Composer');
+        $this->config = new Config(false);
 
         $this->composer->expects($this->any())->method('getConfig')
-            ->willReturn(new Config());
+            ->willReturn($this->config);
         $this->composer->expects($this->any())->method('getPackage')
             ->willReturn(new RootPackage('my/project', '1.0.0', '1.0.0'));
         $this->composer->expects($this->any())->method('getPluginManager')
@@ -68,10 +74,7 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
             $this->composer->expects($this->any())->method('getConfig')
                 ->willReturn(null);
         } else {
-            $config = new Config(false);
-            $config->merge($configData);
-            $this->composer->expects($this->any())->method('getConfig')
-                ->willReturn($config);
+            $this->config->merge($configData);
         }
 
         $plugin = new VersionsCheckPlugin();
@@ -83,19 +86,19 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
     public function getTestOptionsData()
     {
         return array(
-            array(
+            'No option' => array(
                 null,
                 array(
                     'show-links' => true,
                 ),
             ),
-            array(
+            'Empty array options' => array(
                 array(),
                 array(
                     'show-links' => true,
                 ),
             ),
-            array(
+            'Empty array plugin options' => array(
                 array(
                     'config' => array(
                         'sllh-composer-versions-check' => array(),
@@ -105,7 +108,7 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
                     'show-links' => true,
                 ),
             ),
-            array(
+            'Empty plugin options' => array(
                 array(
                     'config' => array(
                         'sllh-composer-versions-check' => null,
@@ -115,7 +118,7 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
                     'show-links' => true,
                 ),
             ),
-            array(
+            'False plugin options' => array(
                 array(
                     'config' => array(
                         'sllh-composer-versions-check' => false,
@@ -125,7 +128,7 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
                     'show-links' => true,
                 ),
             ),
-            array(
+            'Activate show-links' => array(
                 array(
                     'config' => array(
                         'sllh-composer-versions-check' => array(
@@ -137,7 +140,7 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
                     'show-links' => true,
                 ),
             ),
-            array(
+            'Disable show-links' => array(
                 array(
                     'config' => array(
                         'sllh-composer-versions-check' => array(
