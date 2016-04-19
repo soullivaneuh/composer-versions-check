@@ -50,12 +50,17 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
      */
     public function activate(Composer $composer, IOInterface $io)
     {
-        if (version_compare(Composer::VERSION, self::COMPOSER_MIN_VERSION, '<')) {
-            throw new \RuntimeException(sprintf(
-                'Composer v%s is not supported, please upgrade to v%s or higher.',
+        if (!static::satisfiesComposerVersion()) {
+            $io->writeError(sprintf(
+                '<error>Composer v%s is not supported by sllh/composer-versions-check plugin,'
+                .' please upgrade to v%s or higher.</error>',
                 Composer::VERSION,
                 self::COMPOSER_MIN_VERSION
             ));
+        }
+        if ('@package_version@' === Composer::VERSION) {
+            $io->write('<warning>You are running an unstable version of composer.'
+                .' The sllh/composer-versions-check plugin might not works as expected.</warning>');
         }
 
         $this->composer = $composer;
@@ -69,6 +74,10 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
      */
     public static function getSubscribedEvents()
     {
+        if (!static::satisfiesComposerVersion()) {
+            return array();
+        }
+
         return array(
             PluginEvents::COMMAND => array(
                 array('command'),
@@ -77,6 +86,19 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
                 array('postUpdate', -100),
             ),
         );
+    }
+
+    /**
+     * @return bool
+     */
+    public static function satisfiesComposerVersion()
+    {
+        // Can't determine version. Assuming it satisfies.
+        if ('@package_version@' === Composer::VERSION) {
+            return true;
+        }
+
+        return version_compare(Composer::VERSION, self::COMPOSER_MIN_VERSION, '>');
     }
 
     /**
