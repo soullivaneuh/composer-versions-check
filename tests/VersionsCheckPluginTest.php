@@ -46,6 +46,10 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
+        if (!VersionsCheckPlugin::satisfiesComposerVersion()) {
+            $this->markTestSkipped('Composer version not compatible.');
+        }
+
         $this->io = new BufferIO();
         $this->composer = $this->getMock('Composer\Composer');
         $this->config = new Config(false);

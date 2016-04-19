@@ -12,13 +12,14 @@ use Composer\Plugin\PluginInterface;
 use Composer\Repository\RepositoryManager;
 use Composer\Script\Event;
 use Composer\Script\ScriptEvents;
+use Composer\Semver\Semver;
 
 /**
  * @author Sullivan Senechal <soullivaneuh@gmail.com>
  */
 final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInterface
 {
-    const COMPOSER_MIN_VERSION = '1.0.0';
+    const COMPOSER_MIN_VERSION = '1.0.0-stable';
 
     /**
      * @var Composer
@@ -99,7 +100,7 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
             return true;
         }
 
-        return version_compare(Composer::VERSION, self::COMPOSER_MIN_VERSION, '>=');
+        return Semver::satisfies(Composer::VERSION, sprintf('>=%s', static::COMPOSER_MIN_VERSION));
     }
 
     /**
