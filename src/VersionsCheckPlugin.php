@@ -74,6 +74,7 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
      */
     public static function getSubscribedEvents()
     {
+        // Do not subscribe the plugin if not compatible.
         if (!static::satisfiesComposerVersion()) {
             return array();
         }
