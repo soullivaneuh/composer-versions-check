@@ -70,7 +70,12 @@ class VersionsCheckPluginComposerVersionTest extends \PHPUnit_Framework_TestCase
         $this->composer->getEventDispatcher()->dispatch($commandEvent->getName(), $commandEvent);
         $this->composer->getEventDispatcher()->dispatchScript(ScriptEvents::POST_UPDATE_CMD);
 
-        if (VersionsCheckPlugin::satisfiesComposerVersion()) {
+        if (VersionsCheckPlugin::satisfiesComposerVersion() && '@package_version@' === Composer::VERSION) {
+            $this->assertSame(
+                "<warning>You are running an unstable version of composer. The sllh/composer-versions-check plugin might not works as expected.</warning>\n"
+                ."All packages are up to date.\n",
+                $this->io->getOutput());
+        } elseif (VersionsCheckPlugin::satisfiesComposerVersion()) {
             $this->assertSame("All packages are up to date.\n", $this->io->getOutput());
         } else {
             $this->assertSame(
