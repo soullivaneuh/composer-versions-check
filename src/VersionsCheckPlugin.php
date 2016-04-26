@@ -51,15 +51,16 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
      */
     public function activate(Composer $composer, IOInterface $io)
     {
-        if (!static::satisfiesComposerVersion()) {
-            $io->writeError(sprintf(
-                '<error>Composer v%s is not supported by sllh/composer-versions-check plugin,'
-                .' please upgrade to v%s or higher.</error>',
-                Composer::VERSION,
-                self::COMPOSER_MIN_VERSION
-            ));
-        }
-        if ('@package_version@' === Composer::VERSION) {
+        try {
+            if (!static::satisfiesComposerVersion(true)) {
+                $io->writeError(sprintf(
+                    '<error>Composer v%s is not supported by sllh/composer-versions-check plugin,'
+                    .' please upgrade to v%s or higher.</error>',
+                    Composer::VERSION,
+                    self::COMPOSER_MIN_VERSION
+                ));
+            }
+        } catch (\UnexpectedValueException $e) {
             $io->write('<warning>You are running an unstable version of composer.'
                 .' The sllh/composer-versions-check plugin might not works as expected.</warning>');
         }
@@ -91,16 +92,22 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
     }
 
     /**
+     * @param bool $allowException
+     *
      * @return bool
      */
-    public static function satisfiesComposerVersion()
+    public static function satisfiesComposerVersion($allowException = false)
     {
-        // Can't determine version. Assuming it satisfies.
-        if ('@package_version@' === Composer::VERSION) {
-            return true;
+        try {
+            return Semver::satisfies(Composer::VERSION, sprintf('>=%s', static::COMPOSER_MIN_VERSION));
+        } catch (\UnexpectedValueException $e) {
+            if (true === $allowException) {
+                throw $e;
+            }
         }
 
-        return Semver::satisfies(Composer::VERSION, sprintf('>=%s', static::COMPOSER_MIN_VERSION));
+        // Can't determine version. Assuming it satisfies.
+        return true;
     }
 
     /**
