@@ -1,5 +1,10 @@
 # CHANGELOG
 
+* 2.0.1 (2016-04-26)
+
+ * Fix `UnexpectedValueException` with `Semver::satisfies` issue
+ try to update with `--no-plugins` to get this new version.
+
 * 2.0.0 (2016-04-19)
 
  * Composer version compatibility check.
