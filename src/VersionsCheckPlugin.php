@@ -12,7 +12,6 @@ use Composer\Plugin\PluginInterface;
 use Composer\Repository\RepositoryManager;
 use Composer\Script\Event;
 use Composer\Script\ScriptEvents;
-use Composer\Semver\Semver;
 
 /**
  * @author Sullivan Senechal <soullivaneuh@gmail.com>
