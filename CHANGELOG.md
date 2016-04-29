@@ -1,5 +1,9 @@
 # CHANGELOG
 
+* 2.0.2 (2016-04-29)
+
+ * Remove composer compatibility check.
+
 * 2.0.1 (2016-04-26)
 
  * Fix `UnexpectedValueException` with `Semver::satisfies` issue
