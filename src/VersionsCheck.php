@@ -22,11 +22,6 @@ final class VersionsCheck
     private $outdatedPackages = array();
 
     /**
-     * @var VersionConstraint|null
-     */
-    private $oldComparator = null;
-
-    /**
      * @param ArrayRepository             $distRepository
      * @param WritableRepositoryInterface $localRepository
      * @param RootPackageInterface        $rootPackage
