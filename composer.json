@@ -19,8 +19,6 @@
         "sllh/php-cs-fixer-styleci-bridge": "^2.0",
         "symfony/phpunit-bridge": "^2.7.4|^3.0"
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "SLLH\\ComposerVersionsCheck\\": "src/"
