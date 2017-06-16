@@ -1,5 +1,9 @@
 # CHANGELOG
 
+* 2.0.3 (2017-06-16)
+
+  * Fix wrong outdated output on aliased packages.
+
 * 2.0.2 (2016-04-29)
 
   * Remove composer compatibility check.
