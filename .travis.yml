@@ -23,17 +23,17 @@ matrix:
     - dist: precise
       php: 5.3
       env: COMPOSER_FLAGS="--prefer-lowest"
-    - php: 5.6
+    - php: 7.1
       env: COMPOSER_VERSION=1.0.*
-    - php: 5.6
+    - php: 7.1
       env: COMPOSER_VERSION=1.1.*
-    - php: 5.6
+    - php: 7.1
       env: COMPOSER_VERSION=1.2.*
-    - php: 5.6
+    - php: 7.1
       env: COMPOSER_VERSION=1.3.*
-    - php: 5.6
+    - php: 7.1
       env: COMPOSER_VERSION=1.4.*
-    - php: 5.6
+    - php: 7.1
       env: COMPOSER_VERSION=dev-master
   allow_failures:
     - php: nightly
