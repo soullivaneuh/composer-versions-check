@@ -118,7 +118,7 @@ final class VersionsCheck
         $output[] = sprintf(
             '<warning>%d %s not up to date:</warning>',
             $outdatedPackagesCount,
-            1 != $outdatedPackagesCount ? 'packages are' : 'package is'
+            1 !== $outdatedPackagesCount ? 'packages are' : 'package is'
         );
         $output[] = '';
 
