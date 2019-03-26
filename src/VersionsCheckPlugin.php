@@ -45,6 +45,15 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
 
     /** @var boolean */
     private $disabled = false;
+    
+    /**
+     * @var array
+     */
+    private $classes = array(
+        "SLLH\ComposerVersionsCheck\VersionsCheckPlugin",
+        "SLLH\ComposerVersionsCheck\VersionsCheck",
+        "SLLH\ComposerVersionsCheck\OutdatedPackage"
+    );
 
     /**
      * {@inheritdoc}
@@ -52,8 +61,10 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
     public function activate(Composer $composer, IOInterface $io)
     {
         // guard for self-update problem
-        if (__CLASS__ !== 'SLLH\ComposerVersionsCheck\OutdatedPackage\VersionsCheckPlugin') {
-            return $this->disable();
+        foreach ($this->classes as $class) {
+            if (!class_exists($class)) {
+                return $this->disable();
+            }
         }
 
         $this->composer = $composer;
@@ -82,6 +93,10 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
      */
     public function command(CommandEvent $event)
     {
+        if ($this->disabled) {
+            return;
+        }
+        
         $input = $event->getInput();
         $this->preferLowest = $input->hasOption('prefer-lowest') && true === $input->getOption('prefer-lowest');
     }
