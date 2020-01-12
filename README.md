@@ -52,10 +52,12 @@ You can configure the plugin via the [`COMPOSER_HOME/config.json`](https://getco
 {
     "config": {
         "sllh-composer-versions-check": {
-            "show-links": false
+            "show-links": false,
+            "vendor": "drupal"
         }
     }
 }
 ```
 
 * `show-links`: Shows outdated package links. Set to `true` to get a larger output, like the demo.
+* `vendor`: Limits the output to a specific vendor/provider.

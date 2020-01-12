@@ -27,7 +27,7 @@ final class VersionsCheck
      * @param WritableRepositoryInterface $localRepository
      * @param RootPackageInterface        $rootPackage
      */
-    public function checkPackages(ArrayRepository $distRepository, WritableRepositoryInterface $localRepository, RootPackageInterface $rootPackage)
+    public function checkPackages(ArrayRepository $distRepository, WritableRepositoryInterface $localRepository, RootPackageInterface $rootPackage, $vendorName)
     {
         $packages = $localRepository->getPackages();
         foreach ($packages as $package) {
@@ -41,6 +41,12 @@ final class VersionsCheck
                 ? new Constraint('>', $package->getVersion())
                 : new VersionConstraint('>', $package->getVersion())
             ;
+            if ($vendorName !== FALSE) {
+                $parts = explode('/', $package->getName());
+                if ($parts[0] !== $vendorName) {
+                    continue;
+                }
+            }
 
             $higherPackages = $distRepository->findPackages($package->getName(), $versionConstraint);
 

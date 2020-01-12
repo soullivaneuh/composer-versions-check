@@ -87,7 +87,7 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
             return;
         }
 
-        $this->checkVersions($this->composer->getRepositoryManager(), $this->composer->getPackage());
+        $this->checkVersions($this->composer->getRepositoryManager(), $this->composer->getPackage(), $this->options);
     }
 
     /**
@@ -104,6 +104,7 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
 
         $options = array(
             'show-links' => false,
+            'vendor' => FALSE,
         );
 
         if (null === $pluginConfig) {
@@ -111,6 +112,7 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
         }
 
         $options['show-links'] = isset($pluginConfig['show-links']) ? (bool) $pluginConfig['show-links'] : $options['show-links'];
+        $options['vendor'] = isset($pluginConfig['vendor']) ? $pluginConfig['vendor'] : FALSE;
 
         return $options;
     }
@@ -121,11 +123,13 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
      */
     private function checkVersions(RepositoryManager $repositoryManager, RootPackageInterface $rootPackage)
     {
+        $vendorName = $this->options['vendor'] ?? FALSE;
         foreach ($repositoryManager->getRepositories() as $repository) {
             $this->versionsCheck->checkPackages(
                 $repository,
                 $repositoryManager->getLocalRepository(),
-                $rootPackage
+                $rootPackage,
+                $vendorName
             );
         }
 
