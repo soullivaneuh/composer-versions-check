@@ -131,4 +131,20 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
 
         $this->io->write($this->versionsCheck->getOutput($this->options['show-links']), false);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function deactivate(Composer $composer, IOInterface $io)
+    {
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function uninstall(Composer $composer, IOInterface $io)
+    {
+
+    }
 }

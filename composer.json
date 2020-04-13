@@ -12,10 +12,10 @@
     ],
     "require": {
         "php": "^5.3 || ^7.0",
-        "composer-plugin-api": "^1.0"
+        "composer-plugin-api": "^1.0 || ^2.0"
     },
     "require-dev": {
-        "composer/composer": "^1.0",
+        "composer/composer": "^1.0 || ^2.0",
         "sllh/php-cs-fixer-styleci-bridge": "^2.0",
         "symfony/phpunit-bridge": "^2.7.4|^3.0"
     },
