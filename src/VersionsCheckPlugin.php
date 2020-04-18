@@ -111,6 +111,7 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
         ;
 
         $options = array(
+            'ignore-sub-dependencies' => false,
             'show-links' => false,
         );
 
@@ -118,6 +119,7 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
             return $options;
         }
 
+        $options['ignore-sub-dependencies'] = isset($pluginConfig['ignore-sub-dependencies']) ? (bool) $pluginConfig['ignore-sub-dependencies'] : $options['ignore-sub-dependencies'];
         $options['show-links'] = isset($pluginConfig['show-links']) ? (bool) $pluginConfig['show-links'] : $options['show-links'];
 
         return $options;
@@ -129,7 +131,8 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
             $this->versionsCheck->checkPackages(
                 $repository,
                 $repositoryManager->getLocalRepository(),
-                $rootPackage
+                $rootPackage,
+                $this->options['ignore-sub-dependencies']
             );
         }
 

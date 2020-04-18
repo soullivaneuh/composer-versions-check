@@ -207,6 +207,6 @@ EOF
      */
     private function checkPackages()
     {
-        $this->versionsCheck->checkPackages($this->distRepository, $this->localRepository, $this->rootPackage);
+        $this->versionsCheck->checkPackages($this->distRepository, $this->localRepository, $this->rootPackage, false);
     }
 }
