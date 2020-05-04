@@ -69,18 +69,12 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
         );
     }
 
-    /**
-     * @param CommandEvent $event
-     */
     public function command(CommandEvent $event)
     {
         $input = $event->getInput();
         $this->preferLowest = $input->hasOption('prefer-lowest') && true === $input->getOption('prefer-lowest');
     }
 
-    /**
-     * @param Event $event
-     */
     public function postUpdate(Event $event)
     {
         if (true === $this->preferLowest) {
@@ -115,10 +109,6 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
         return $options;
     }
 
-    /**
-     * @param RepositoryManager    $repositoryManager
-     * @param RootPackageInterface $rootPackage
-     */
     private function checkVersions(RepositoryManager $repositoryManager, RootPackageInterface $rootPackage)
     {
         foreach ($repositoryManager->getRepositories() as $repository) {

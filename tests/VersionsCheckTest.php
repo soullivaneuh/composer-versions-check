@@ -101,9 +101,8 @@ EOF
     /**
      * @dataProvider getMultiplePackagesComparisonTestsData
      *
-     * @param array $packagesData
-     * @param bool  $preferStable
-     * @param int   $outdatedPackagesCount
+     * @param bool $preferStable
+     * @param int  $outdatedPackagesCount
      */
     public function testMultiplePackagesComparison(array $packagesData, $preferStable, $outdatedPackagesCount)
     {

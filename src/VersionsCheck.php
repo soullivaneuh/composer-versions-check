@@ -22,11 +22,6 @@ final class VersionsCheck
      */
     private $outdatedPackages = array();
 
-    /**
-     * @param ArrayRepository             $distRepository
-     * @param WritableRepositoryInterface $localRepository
-     * @param RootPackageInterface        $rootPackage
-     */
     public function checkPackages(ArrayRepository $distRepository, WritableRepositoryInterface $localRepository, RootPackageInterface $rootPackage)
     {
         $packages = $localRepository->getPackages();
@@ -52,7 +47,7 @@ final class VersionsCheck
             }
 
             // We got higher packages! Let's push it.
-            if (count($higherPackages) > 0) {
+            if (\count($higherPackages) > 0) {
                 // Sort packages by highest version to lowest
                 usort($higherPackages, function (PackageInterface $p1, PackageInterface $p2) {
                     return Comparator::compare($p1->getVersion(), '<', $p2->getVersion());
@@ -73,7 +68,7 @@ final class VersionsCheck
     {
         $output = array();
 
-        if (0 === count($this->outdatedPackages)) {
+        if (0 === \count($this->outdatedPackages)) {
             $output[] = '<info>All packages are up to date.</info>';
         } else {
             $this->createNotUpToDateOutput($output, $showDepends);
@@ -83,9 +78,6 @@ final class VersionsCheck
     }
 
     /**
-     * @param WritableRepositoryInterface $localRepository
-     * @param PackageInterface            $needle
-     *
      * @return Link[]
      */
     private function getPackageDepends(WritableRepositoryInterface $localRepository, PackageInterface $needle)
@@ -99,7 +91,7 @@ final class VersionsCheck
             }
 
             foreach ($package->getRequires() as $link) {
-                if ($link->getTarget() === $needle->getName() && !in_array($link, $depends, true)) {
+                if ($link->getTarget() === $needle->getName() && !\in_array($link, $depends, true)) {
                     $depends[] = $link;
                 }
             }
@@ -109,12 +101,11 @@ final class VersionsCheck
     }
 
     /**
-     * @param array $output
-     * @param bool  $showLinks
+     * @param bool $showLinks
      */
     private function createNotUpToDateOutput(array &$output, $showLinks = true)
     {
-        $outdatedPackagesCount = count($this->outdatedPackages);
+        $outdatedPackagesCount = \count($this->outdatedPackages);
         $output[] = sprintf(
             '<warning>%d %s not up to date:</warning>',
             $outdatedPackagesCount,
