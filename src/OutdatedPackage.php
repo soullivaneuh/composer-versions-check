@@ -26,9 +26,7 @@ final class OutdatedPackage
     private $links = array();
 
     /**
-     * @param PackageInterface $actual
-     * @param PackageInterface $last
-     * @param Link[]           $links
+     * @param Link[] $links
      */
     public function __construct(PackageInterface $actual, PackageInterface $last, array $links = null)
     {

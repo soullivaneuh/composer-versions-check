@@ -66,7 +66,6 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
      * @dataProvider getTestOptionsData
      *
      * @param array|null $configData
-     * @param array      $expectedOptions
      */
     public function testOptions($configData, array $expectedOptions)
     {
