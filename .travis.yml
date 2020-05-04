@@ -1,3 +1,7 @@
+branches:
+  only:
+    - master
+
 language: php
 
 dist: trusty
@@ -8,8 +12,9 @@ php:
   - 5.6
   - 7.0
   - 7.1
+  - 7.2
+  - 7.3
   - nightly
-  - hhvm
 
 env:
   global:
@@ -23,17 +28,9 @@ matrix:
     - dist: precise
       php: 5.3
       env: COMPOSER_FLAGS="--prefer-lowest"
-    - php: 7.1
-      env: COMPOSER_VERSION=1.0.*
-    - php: 7.1
-      env: COMPOSER_VERSION=1.1.*
-    - php: 7.1
-      env: COMPOSER_VERSION=1.2.*
-    - php: 7.1
-      env: COMPOSER_VERSION=1.3.*
-    - php: 7.1
-      env: COMPOSER_VERSION=1.4.*
-    - php: 7.1
+    - php: 7.3
+      env: COMPOSER_VERSION=1.*
+    - php: 7.3
       env: COMPOSER_VERSION=dev-master
   allow_failures:
     - php: nightly
@@ -46,7 +43,7 @@ cache:
     - $HOME/.composer/cache/files
 
 before_install:
-  - if [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then phpenv config-rm xdebug.ini; fi;
+  - echo "memory_limit=4096M" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - composer config -g github-oauth.github.com $GITHUB_OAUTH_TOKEN
   - composer global require 'phpunit/phpunit:>=4.0, <6' satooshi/php-coveralls:@stable codeclimate/php-test-reporter:@stable --no-update
   - if [ "$COMPOSER_VERSION" != "" ]; then composer require "composer/composer:${COMPOSER_VERSION}" --no-update; fi;
@@ -54,9 +51,6 @@ before_install:
 install:
   - composer global update --prefer-dist --no-interaction
   - composer update --prefer-dist --no-interaction $COMPOSER_FLAGS
-
-before_script:
-  - if [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then echo "zend_extension=xdebug.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi;
 
 script: phpunit -c phpunit.xml.dist --coverage-clover build/logs/clover.xml
 
