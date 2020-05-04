@@ -31,6 +31,8 @@ matrix:
     - php: 7.3
       env: COMPOSER_VERSION=1.*
     - php: 7.3
+      env: COMPOSER_VERSION=2.*@dev
+    - php: 7.3
       env: COMPOSER_VERSION=dev-master
   allow_failures:
     - php: nightly

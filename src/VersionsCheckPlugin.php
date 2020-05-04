@@ -57,6 +57,20 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
     /**
      * {@inheritdoc}
      */
+    public function deactivate(Composer $composer, IOInterface $io)
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function uninstall(Composer $composer, IOInterface $io)
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public static function getSubscribedEvents()
     {
         return array(
