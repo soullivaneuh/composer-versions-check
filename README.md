@@ -32,10 +32,10 @@ You can install it either globally (recommended):
 composer global require sllh/composer-versions-check
 ```
 
-or locally:
+or locally (as require-dev dependency then):
 
 ```bash
-composer require sllh/composer-versions-check
+composer require --dev sllh/composer-versions-check
 ```
 
 ## Usage
