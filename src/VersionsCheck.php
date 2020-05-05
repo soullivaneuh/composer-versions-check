@@ -34,7 +34,7 @@ final class VersionsCheck
             }
 
             // Sub dependencies are ignored and package is not require in root. Skip.
-            if ($ignoreSubDependencies && !in_array($package->getName(), $rootRequires, true)) {
+            if ($ignoreSubDependencies && !\in_array($package->getName(), $rootRequires, true)) {
                 continue;
             }
 
