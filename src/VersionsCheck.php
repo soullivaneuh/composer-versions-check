@@ -22,7 +22,7 @@ final class VersionsCheck
      */
     private $outdatedPackages = array();
 
-    public function checkPackages(ArrayRepository $distRepository, WritableRepositoryInterface $localRepository, RootPackageInterface $rootPackage, bool $ignoreSubDependencies)
+    public function checkPackages(ArrayRepository $distRepository, WritableRepositoryInterface $localRepository, RootPackageInterface $rootPackage, $ignoreSubDependencies)
     {
         $packages = $localRepository->getPackages();
         $rootRequires = array_keys($rootPackage->getRequires()) + array_keys($rootPackage->getDevRequires());
