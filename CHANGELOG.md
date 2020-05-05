@@ -1,5 +1,9 @@
 # CHANGELOG
 
+* 2.0.4 (2020-05-05)
+
+  * Composer v2 support
+
 * 2.0.3 (2017-06-16)
 
   * Fix wrong outdated output on aliased packages.
