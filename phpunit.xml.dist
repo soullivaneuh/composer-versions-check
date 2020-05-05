@@ -10,6 +10,9 @@
          processIsolation="false"
          stopOnFailure="false"
          syntaxCheck="false">
+    <php>
+        <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak" />
+    </php>
     <testsuites>
         <testsuite name="Composer version-check plugin bridge Test Suite">
             <directory >./tests/</directory>
