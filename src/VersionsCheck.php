@@ -25,7 +25,7 @@ final class VersionsCheck
     public function checkPackages(ArrayRepository $distRepository, WritableRepositoryInterface $localRepository, RootPackageInterface $rootPackage, $ignoreSubDependencies)
     {
         $packages = $localRepository->getPackages();
-        $rootRequires = array_keys($rootPackage->getRequires()) + array_keys($rootPackage->getDevRequires());
+        $rootRequires = array_keys($rootPackage->getRequires() + $rootPackage->getDevRequires());
 
         foreach ($packages as $package) {
             // Do not compare aliases. Aliased packages are also provided.
