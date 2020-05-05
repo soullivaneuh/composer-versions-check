@@ -94,14 +94,14 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
             'No option' => array(
                 null,
                 array(
-                    'ignore-sub-dependencies' => false,
+                    'root-packages-only' => false,
                     'show-links' => false,
                 ),
             ),
             'Empty array options' => array(
                 array(),
                 array(
-                    'ignore-sub-dependencies' => false,
+                    'root-packages-only' => false,
                     'show-links' => false,
                 ),
             ),
@@ -112,7 +112,7 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
                     ),
                 ),
                 array(
-                    'ignore-sub-dependencies' => false,
+                    'root-packages-only' => false,
                     'show-links' => false,
                 ),
             ),
@@ -123,7 +123,7 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
                     ),
                 ),
                 array(
-                    'ignore-sub-dependencies' => false,
+                    'root-packages-only' => false,
                     'show-links' => false,
                 ),
             ),
@@ -134,33 +134,33 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
                     ),
                 ),
                 array(
-                    'ignore-sub-dependencies' => false,
+                    'root-packages-only' => false,
                     'show-links' => false,
                 ),
             ),
-            'Activate ignore-sub-dependencies' => array(
+            'Activate root-packages-only' => array(
                 array(
                     'config' => array(
                         'sllh-composer-versions-check' => array(
-                            'ignore-sub-dependencies' => true,
+                            'root-packages-only' => true,
                         ),
                     ),
                 ),
                 array(
-                    'ignore-sub-dependencies' => true,
+                    'root-packages-only' => true,
                     'show-links' => false,
                 ),
             ),
-            'Disable ignore-sub-dependencies' => array(
+            'Disable root-packages-only' => array(
                 array(
                     'config' => array(
                         'sllh-composer-versions-check' => array(
-                            'ignore-sub-dependencies' => false,
+                            'root-packages-only' => false,
                         ),
                     ),
                 ),
                 array(
-                    'ignore-sub-dependencies' => false,
+                    'root-packages-only' => false,
                     'show-links' => false,
                 ),
             ),
@@ -173,7 +173,7 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
                     ),
                 ),
                 array(
-                    'ignore-sub-dependencies' => false,
+                    'root-packages-only' => false,
                     'show-links' => true,
                 ),
             ),
@@ -186,7 +186,7 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
                     ),
                 ),
                 array(
-                    'ignore-sub-dependencies' => false,
+                    'root-packages-only' => false,
                     'show-links' => false,
                 ),
             ),

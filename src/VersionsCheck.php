@@ -22,7 +22,7 @@ final class VersionsCheck
      */
     private $outdatedPackages = array();
 
-    public function checkPackages(ArrayRepository $distRepository, WritableRepositoryInterface $localRepository, RootPackageInterface $rootPackage, $ignoreSubDependencies)
+    public function checkPackages(ArrayRepository $distRepository, WritableRepositoryInterface $localRepository, RootPackageInterface $rootPackage, $rootPackagesOnly)
     {
         $packages = $localRepository->getPackages();
         $rootRequires = array_keys($rootPackage->getRequires() + $rootPackage->getDevRequires());
@@ -33,8 +33,8 @@ final class VersionsCheck
                 continue;
             }
 
-            // Sub dependencies are ignored and package is not require in root. Skip.
-            if ($ignoreSubDependencies && !\in_array($package->getName(), $rootRequires, true)) {
+            // No root package are ignored and it is one. Skip.
+            if ($rootPackagesOnly && !\in_array($package->getName(), $rootRequires, true)) {
                 continue;
             }
 
