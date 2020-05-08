@@ -203,10 +203,83 @@ EOF
     }
 
     /**
+     * @dataProvider getRootOnlyPackageTestsData
+     */
+    public function testRootOnlyPackage(array $packagesData, array $packagesRequired, array $packagesDevRequired, $rootOnly, $outdatedPackagesCount)
+    {
+
+        foreach ($packagesData as $name => $packageData) {
+            list($actualVersion, $availableVersions, $expectedVersion) = $packageData;
+            $this->localRepository->addPackage(new Package($name, $actualVersion, $actualVersion));
+            foreach ($availableVersions as $availableVersion) {
+                $this->distRepository->addPackage(new Package($name, $availableVersion, $availableVersion));
+            }
+
+            if (false !== $expectedVersion) {
+                $shouldBeUpdatedOutput[] = sprintf(
+                    '  - <info>%s</info> (<comment>%s</comment>) latest is <comment>%s</comment>',
+                    $name, $actualVersion, $expectedVersion
+                );
+            }
+        }
+
+        $this->rootPackage->setRequires($packagesRequired);
+        $this->rootPackage->setDevRequires($packagesDevRequired);
+
+        $this->checkPackages($rootOnly);
+
+        $this->assertSame(sprintf(<<<'EOF'
+<warning>%d packages are not up to date:</warning>
+
+%s
+
+
+EOF
+            , $outdatedPackagesCount, implode("\n\n", $shouldBeUpdatedOutput)), $this->versionsCheck->getOutput());
+    }
+
+    /**
+     * @return array
+     */
+    public function getRootOnlyPackageTestsData()
+    {
+        return array(
+            array(array(
+                'foo/bar' => array('1.0.0', array('1.0.0', '1.0.1', '1.0.2', '1.0.4', '2.0.0'), '2.0.0'),
+                'some/package' => array('1.0.4', array('1.0.0', '1.0.1', '1.0.2', '1.0.4', '2.0.0'), false),
+                'vendor/package-1' => array('2.0.0', array('1.0.0', '1.0.1', '1.0.2', '1.0.4', '2.0.0'), false),
+                'vendor/up-to-date' => array('9.9.0', array('8.0.0', '9.9.0', '1.0-dev'), false),
+                'vendor/dev-master' => array('9.9.0', array('8.0.0', '9.9.0', '10.0-dev'), false),
+                'vendor/package-2' => array('1.0.0', array('1.0.0', '1.0.1', '2.0.0', '2.0.0-alpha1'), '2.0.0'),
+                'vendor/package-3' => array('1.0.1', array('1.0.0', '1.0.1', '2.0.0-alpha1'), false),
+                'vendor/prefer-stable' => array('1.0.1', array('1.0.0', '1.0.1', '2.0.0-alpha1'), false),
+            ), array(
+                'foo/bar' => new Link('foo/bar', 'foo/bar')
+            ), array(
+                'vendor/package-2' => new Link('vendor/package-2', 'vendor/package-2')
+            ), true, 2),
+            array(array(
+                'foo/bar' => array('1.0.0', array('1.0.0', '1.0.1', '1.0.2', '1.0.4', '2.0.0'), '2.0.0'),
+                'some/package' => array('1.0.4', array('1.0.0', '1.0.1', '1.0.2', '1.0.4', '2.0.0'), '2.0.0'),
+                'vendor/package-1' => array('2.0.0', array('1.0.0', '1.0.1', '1.0.2', '1.0.4', '2.0.0'), false),
+                'vendor/up-to-date' => array('9.9.0', array('8.0.0', '9.9.0', '1.0-dev'), false),
+                'vendor/dev-master' => array('9.9.0', array('8.0.0', '9.9.0', '10.0-dev'), '10.0-dev'),
+                'vendor/package-2' => array('1.0.0', array('1.0.0', '1.0.1', '2.0.0', '2.0.0-alpha1'), '2.0.0'),
+                'vendor/package-3' => array('1.0.1', array('1.0.0', '1.0.1', '2.0.0-alpha1'), '2.0.0-alpha1'),
+                'vendor/prefer-stable' => array('1.0.1', array('1.0.0', '1.0.1', '2.0.0-alpha1'), '2.0.0-alpha1'),
+            ), array(
+                'foo/bar' => new Link('foo/bar', 'foo/bar')
+            ), array(
+                'vendor/package-2' => new Link('vendor/package-2', 'vendor/package-2')
+            ), false, 6),
+        );
+    }
+
+    /**
      * Calls VersionsCheck::checkPackages.
      */
-    private function checkPackages()
+    private function checkPackages($rootPackageOnly = false)
     {
-        $this->versionsCheck->checkPackages($this->distRepository, $this->localRepository, $this->rootPackage, false);
+        $this->versionsCheck->checkPackages($this->distRepository, $this->localRepository, $this->rootPackage, $rootPackageOnly);
     }
 }
