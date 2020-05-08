@@ -43,11 +43,30 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
      */
     private $options = array();
 
+    /** @var boolean */
+    private $disabled = false;
+    
+    /**
+     * @var array
+     */
+    private $classes = array(
+        "SLLH\ComposerVersionsCheck\VersionsCheckPlugin",
+        "SLLH\ComposerVersionsCheck\VersionsCheck",
+        "SLLH\ComposerVersionsCheck\OutdatedPackage"
+    );
+
     /**
      * {@inheritdoc}
      */
     public function activate(Composer $composer, IOInterface $io)
     {
+        // guard for self-update problem
+        foreach ($this->classes as $class) {
+            if (!class_exists($class)) {
+                return $this->disable();
+            }
+        }
+
         $this->composer = $composer;
         $this->io = $io;
         $this->versionsCheck = new VersionsCheck();
@@ -85,13 +104,17 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
 
     public function command(CommandEvent $event)
     {
+        if ($this->disabled) {
+            return;
+        }
+        
         $input = $event->getInput();
         $this->preferLowest = $input->hasOption('prefer-lowest') && true === $input->getOption('prefer-lowest');
     }
 
     public function postUpdate(Event $event)
     {
-        if (true === $this->preferLowest) {
+        if ($this->disabled || true === $this->preferLowest) {
             return;
         }
 
@@ -105,6 +128,10 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
      */
     private function resolveOptions()
     {
+        if ($this->disabled) {
+            return;
+        }
+
         $pluginConfig = $this->composer->getConfig()
             ? $this->composer->getConfig()->get('sllh-composer-versions-check')
             : null
@@ -125,6 +152,10 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
 
     private function checkVersions(RepositoryManager $repositoryManager, RootPackageInterface $rootPackage)
     {
+        if ($this->disabled) {
+            return;
+        }
+        
         foreach ($repositoryManager->getRepositories() as $repository) {
             $this->versionsCheck->checkPackages(
                 $repository,
@@ -134,5 +165,10 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
         }
 
         $this->io->write($this->versionsCheck->getOutput($this->options['show-links']), false);
+    }
+    
+    public function disable()
+    {
+        $this->disabled = true;
     }
 }
