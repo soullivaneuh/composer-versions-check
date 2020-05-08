@@ -109,22 +109,7 @@ EOF
         $this->rootPackage->setMinimumStability('dev');
         $this->rootPackage->setPreferStable($preferStable);
 
-        $shouldBeUpdatedOutput = array();
-
-        foreach ($packagesData as $name => $packageData) {
-            list($actualVersion, $availableVersions, $expectedVersion) = $packageData;
-            $this->localRepository->addPackage(new Package($name, $actualVersion, $actualVersion));
-            foreach ($availableVersions as $availableVersion) {
-                $this->distRepository->addPackage(new Package($name, $availableVersion, $availableVersion));
-            }
-
-            if (false !== $expectedVersion) {
-                $shouldBeUpdatedOutput[] = sprintf(
-                    '  - <info>%s</info> (<comment>%s</comment>) latest is <comment>%s</comment>',
-                    $name, $actualVersion, $expectedVersion
-                );
-            }
-        }
+        $shouldBeUpdatedOutput = $this->addPackagesAndGetShouldBeUpdatedOutput($packagesData);
 
         $this->checkPackages();
 
@@ -207,22 +192,7 @@ EOF
      */
     public function testRootOnlyPackage(array $packagesData, array $packagesRequired, array $packagesDevRequired, $rootOnly, $outdatedPackagesCount)
     {
-
-        foreach ($packagesData as $name => $packageData) {
-            list($actualVersion, $availableVersions, $expectedVersion) = $packageData;
-            $this->localRepository->addPackage(new Package($name, $actualVersion, $actualVersion));
-            foreach ($availableVersions as $availableVersion) {
-                $this->distRepository->addPackage(new Package($name, $availableVersion, $availableVersion));
-            }
-
-            if (false !== $expectedVersion) {
-                $shouldBeUpdatedOutput[] = sprintf(
-                    '  - <info>%s</info> (<comment>%s</comment>) latest is <comment>%s</comment>',
-                    $name, $actualVersion, $expectedVersion
-                );
-            }
-        }
-
+        $shouldBeUpdatedOutput = $this->addPackagesAndGetShouldBeUpdatedOutput($packagesData);
         $this->rootPackage->setRequires($packagesRequired);
         $this->rootPackage->setDevRequires($packagesDevRequired);
 
@@ -254,9 +224,9 @@ EOF
                 'vendor/package-3' => array('1.0.1', array('1.0.0', '1.0.1', '2.0.0-alpha1'), false),
                 'vendor/prefer-stable' => array('1.0.1', array('1.0.0', '1.0.1', '2.0.0-alpha1'), false),
             ), array(
-                'foo/bar' => new Link('foo/bar', 'foo/bar')
+                'foo/bar' => new Link('foo/bar', 'foo/bar'),
             ), array(
-                'vendor/package-2' => new Link('vendor/package-2', 'vendor/package-2')
+                'vendor/package-2' => new Link('vendor/package-2', 'vendor/package-2'),
             ), true, 2),
             array(array(
                 'foo/bar' => array('1.0.0', array('1.0.0', '1.0.1', '1.0.2', '1.0.4', '2.0.0'), '2.0.0'),
@@ -268,11 +238,33 @@ EOF
                 'vendor/package-3' => array('1.0.1', array('1.0.0', '1.0.1', '2.0.0-alpha1'), '2.0.0-alpha1'),
                 'vendor/prefer-stable' => array('1.0.1', array('1.0.0', '1.0.1', '2.0.0-alpha1'), '2.0.0-alpha1'),
             ), array(
-                'foo/bar' => new Link('foo/bar', 'foo/bar')
+                'foo/bar' => new Link('foo/bar', 'foo/bar'),
             ), array(
-                'vendor/package-2' => new Link('vendor/package-2', 'vendor/package-2')
+                'vendor/package-2' => new Link('vendor/package-2', 'vendor/package-2'),
             ), false, 6),
         );
+    }
+
+    private function addPackagesAndGetShouldBeUpdatedOutput(array $packagesData)
+    {
+        $shouldBeUpdatedOutput = array();
+
+        foreach ($packagesData as $name => $packageData) {
+            list($actualVersion, $availableVersions, $expectedVersion) = $packageData;
+            $this->localRepository->addPackage(new Package($name, $actualVersion, $actualVersion));
+            foreach ($availableVersions as $availableVersion) {
+                $this->distRepository->addPackage(new Package($name, $availableVersion, $availableVersion));
+            }
+
+            if (false !== $expectedVersion) {
+                $shouldBeUpdatedOutput[] = sprintf(
+                    '  - <info>%s</info> (<comment>%s</comment>) latest is <comment>%s</comment>',
+                    $name, $actualVersion, $expectedVersion
+                );
+            }
+        }
+
+        return $shouldBeUpdatedOutput;
     }
 
     /**
