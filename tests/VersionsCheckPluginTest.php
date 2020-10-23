@@ -49,7 +49,7 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->io = new BufferIO();
-        $this->composer = $this->getMock('Composer\Composer');
+        $this->composer = $this->createMock('Composer\Composer');
         $this->config = new Config(false);
 
         $this->composer->expects($this->any())->method('getConfig')
