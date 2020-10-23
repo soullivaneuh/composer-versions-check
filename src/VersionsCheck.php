@@ -34,8 +34,7 @@ final class VersionsCheck
             // Old composer versions BC
             $versionConstraint = class_exists('Composer\Semver\Constraint\Constraint')
                 ? new Constraint('>', $package->getVersion())
-                : new VersionConstraint('>', $package->getVersion())
-            ;
+                : new VersionConstraint('>', $package->getVersion());
 
             $higherPackages = $distRepository->findPackages($package->getName(), $versionConstraint);
 
@@ -50,11 +49,24 @@ final class VersionsCheck
             if (\count($higherPackages) > 0) {
                 // Sort packages by highest version to lowest
                 usort($higherPackages, function (PackageInterface $p1, PackageInterface $p2) {
-                    return Comparator::compare($p1->getVersion(), '<', $p2->getVersion());
+                    if (Comparator::compare($p1->getVersion(), '=', $p2->getVersion())) {
+                        return 0;
+                    }
+                    if (Comparator::compare($p1->getVersion(), '<', $p2->getVersion())) {
+                        return -1;
+                    }
+                    return 1;
                 });
 
                 // Push actual and last package on outdated array
-                array_push($this->outdatedPackages, new OutdatedPackage($package, $higherPackages[0], $this->getPackageDepends($localRepository, $package)));
+                array_push(
+                    $this->outdatedPackages,
+                    new OutdatedPackage(
+                        $package,
+                        $higherPackages[0],
+                        $this->getPackageDepends($localRepository, $package)
+                    )
+                );
             }
         }
     }
@@ -74,7 +86,7 @@ final class VersionsCheck
             $this->createNotUpToDateOutput($output, $showDepends);
         }
 
-        return implode(PHP_EOL, $output).PHP_EOL;
+        return implode(PHP_EOL, $output) . PHP_EOL;
     }
 
     /**
