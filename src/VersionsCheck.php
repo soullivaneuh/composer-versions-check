@@ -53,9 +53,9 @@ final class VersionsCheck
                         return 0;
                     }
                     if (Comparator::compare($p1->getVersion(), '<', $p2->getVersion())) {
-                        return -1;
+                        return 1;
                     }
-                    return 1;
+                    return -1;
                 });
 
                 // Push actual and last package on outdated array
