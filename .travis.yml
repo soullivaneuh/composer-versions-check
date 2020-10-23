@@ -43,7 +43,7 @@ matrix:
 #      env: COMPOSER_VERSION=dev-master
   allow_failures:
     - php: nightly
-    - env: COMPOSER_VERSION=dev-master
+      env: COMPOSER_VERSION=2.*@dev
 
 sudo: false
 
