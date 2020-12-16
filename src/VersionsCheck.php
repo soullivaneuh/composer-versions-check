@@ -74,7 +74,7 @@ final class VersionsCheck
             $this->createNotUpToDateOutput($output, $showDepends);
         }
 
-        return implode(PHP_EOL, $output).PHP_EOL;
+        return implode(\PHP_EOL, $output).\PHP_EOL;
     }
 
     /**
