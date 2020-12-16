@@ -7,12 +7,14 @@ use Composer\Package\Package;
 use Composer\Package\RootPackage;
 use Composer\Repository\ArrayRepository;
 use Composer\Repository\WritableArrayRepository;
+use Composer\Semver\Constraint\Constraint;
+use PHPUnit\Framework\TestCase;
 use SLLH\ComposerVersionsCheck\VersionsCheck;
 
 /**
  * @author Sullivan Senechal <soullivaneuh@gmail.com>
  */
-class VersionsCheckTest extends \PHPUnit_Framework_TestCase
+class VersionsCheckTest extends TestCase
 {
     /**
      * @var ArrayRepository
@@ -37,7 +39,7 @@ class VersionsCheckTest extends \PHPUnit_Framework_TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->distRepository = new ArrayRepository();
         $this->localRepository = new WritableArrayRepository();
@@ -64,7 +66,7 @@ class VersionsCheckTest extends \PHPUnit_Framework_TestCase
 
         // Must have one outdatedPackage if this should be updated
         if (true === $shouldBeUpdated) {
-            $this->assertAttributeCount(1, 'outdatedPackages', $this->versionsCheck);
+            $this->assertCount(1, $this->versionsCheck->getOutdatedPackages());
             $this->assertSame(sprintf(<<<'EOF'
 <warning>1 package is not up to date:</warning>
 
@@ -74,7 +76,7 @@ class VersionsCheckTest extends \PHPUnit_Framework_TestCase
 EOF
                 , $actualVersion, $higherVersion), $this->versionsCheck->getOutput());
         } else {
-            $this->assertAttributeCount(0, 'outdatedPackages', $this->versionsCheck);
+            $this->assertCount(0, $this->versionsCheck->getOutdatedPackages());
             $this->assertSame("<info>All packages are up to date.</info>\n", $this->versionsCheck->getOutput());
         }
     }
@@ -172,7 +174,7 @@ EOF
         $this->localRepository->addPackage(new Package('foo/bar', '1.1', '1.1'));
 
         $linkedPackage = new Package('dummy/link', '1.0', '1.0');
-        $linkedPackage->setRequires(array(new Link('dummy/link', 'foo/bar', null, '', '1.*')));
+        $linkedPackage->setRequires(array(new Link('dummy/link', 'foo/bar', new Constraint(Constraint::STR_OP_GT, '1.0'), '', '1.*')));
         $this->localRepository->addPackage($linkedPackage);
 
         // To test root package detection
@@ -181,7 +183,7 @@ EOF
         $this->checkPackages();
 
         // Must have one outdatedPackage if this should be updated
-        $this->assertAttributeCount(1, 'outdatedPackages', $this->versionsCheck);
+        $this->assertCount(1, $this->versionsCheck->getOutdatedPackages());
         $this->assertSame(<<<'EOF'
 <warning>1 package is not up to date:</warning>
 

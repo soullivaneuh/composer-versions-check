@@ -19,6 +19,7 @@ use Composer\Repository\RepositoryManager;
 use Composer\Repository\WritableArrayRepository;
 use Composer\Script\ScriptEvents;
 use Composer\Util\HttpDownloader;
+use PHPUnit\Framework\TestCase;
 use SLLH\ComposerVersionsCheck\VersionsCheckPlugin;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
@@ -26,7 +27,7 @@ use Symfony\Component\Console\Output\NullOutput;
 /**
  * @author Sullivan Senechal <soullivaneuh@gmail.com>
  */
-class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
+class VersionsCheckPluginTest extends TestCase
 {
     /**
      * @var BufferIO
@@ -46,10 +47,10 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->io = new BufferIO();
-        $this->composer = $this->getMock('Composer\Composer');
+        $this->composer = $this->createMock(Composer::class);
         $this->config = new Config(false);
 
         $this->composer->expects($this->any())->method('getConfig')
@@ -85,7 +86,7 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
         $plugin = new VersionsCheckPlugin();
         $plugin->activate($this->composer, $this->io);
 
-        $this->assertAttributeSame($expectedOptions, 'options', $plugin);
+        $this->assertSame($expectedOptions, $plugin->getOptions());
     }
 
     public function getTestOptionsData()
@@ -166,9 +167,6 @@ class VersionsCheckPluginTest extends \PHPUnit_Framework_TestCase
         $this->addComposerPlugin($plugin);
 
         $this->assertSame(array($plugin), $this->composer->getPluginManager()->getPlugins());
-        $this->assertAttributeInstanceOf('Composer\Composer', 'composer', $plugin);
-        $this->assertAttributeInstanceOf('Composer\IO\IOInterface', 'io', $plugin);
-        $this->assertAttributeInstanceOf('SLLH\ComposerVersionsCheck\VersionsCheck', 'versionsCheck', $plugin);
     }
 
     public function testUpdateCommand()
