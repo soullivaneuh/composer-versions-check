@@ -54,7 +54,7 @@ final class VersionsCheck
                 });
 
                 // Push actual and last package on outdated array
-                array_push($this->outdatedPackages, new OutdatedPackage($package, $higherPackages[0], $this->getPackageDepends($localRepository, $package)));
+                $this->outdatedPackages[] = new OutdatedPackage($package, $higherPackages[0], $this->getPackageDepends($localRepository, $package));
             }
         }
     }
@@ -74,7 +74,15 @@ final class VersionsCheck
             $this->createNotUpToDateOutput($output, $showDepends);
         }
 
-        return implode(PHP_EOL, $output).PHP_EOL;
+        return implode(\PHP_EOL, $output).\PHP_EOL;
+    }
+
+    /**
+     * @return OutdatedPackage
+     */
+    public function getOutdatedPackages(): array
+    {
+        return $this->outdatedPackages;
     }
 
     /**

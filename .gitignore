@@ -1,4 +1,5 @@
-composer.lock
+/.php_cs.cache
+/.phpunit.result.cache
+/composer.lock
 /vendor
 *.phar
-.php_cs.cache

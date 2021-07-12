@@ -98,6 +98,11 @@ final class VersionsCheckPlugin implements PluginInterface, EventSubscriberInter
         $this->checkVersions($this->composer->getRepositoryManager(), $this->composer->getPackage());
     }
 
+    public function getOptions(): array
+    {
+        return $this->options;
+    }
+
     /**
      * Tries to get plugin options and resolves them.
      *
