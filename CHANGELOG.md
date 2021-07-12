@@ -1,5 +1,9 @@
 # CHANGELOG
 
+* 2.0.5 (2021-12-07)
+
+  * PHP 8 support
+
 * 2.0.4 (2020-05-05)
 
   * Composer v2 support
