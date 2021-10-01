@@ -50,7 +50,7 @@ final class VersionsCheck
             if (\count($higherPackages) > 0) {
                 // Sort packages by highest version to lowest
                 usort($higherPackages, function (PackageInterface $p1, PackageInterface $p2) {
-                    return Comparator::compare($p1->getVersion(), '<', $p2->getVersion());
+                    return Comparator::compare($p1->getVersion(), '<', $p2->getVersion()) ? 1 : -1;
                 });
 
                 // Push actual and last package on outdated array
